@@ -20,6 +20,10 @@ repositories {
 dependencies {
     compile "org.apache.arrow:arrow-java-root:$version_arrow"
     compile "org.apache.arrow:arrow-plasma:$version_arrow"
-    
+
+    // https://mvnrepository.com/artifact/org.apache.arrow/arrow-plasma
+    compile group: 'org.apache.arrow', name: 'arrow-plasma', version: '0.11.0'
+
+
     python "pypi:pyarrow:$version_arrow"
 }
