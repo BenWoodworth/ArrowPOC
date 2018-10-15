@@ -17,6 +17,8 @@ repositories {
 }
 
 dependencies {
-    //compile "org.apache.arrow:arrow-tools:$version_arrow" // TODO
+    compile "org.apache.arrow:arrow-java-root:$version_arrow"
+    compile "org.apache.arrow:arrow-plasma:$version_arrow"
+    
     python "pypi:pyarrow:$version_arrow"
 }
