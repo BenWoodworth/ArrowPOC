@@ -18,9 +18,18 @@ repositories {
 }
 
 dependencies {
-    compile "org.apache.arrow:arrow-java-root:$version_arrow"
-    compile "org.apache.arrow:arrow-plasma:$version_arrow"
+//    compile "org.apache.arrow:arrow-java-root:$version_arrow"
+//    compile "org.apache.arrow:arrow-plasma:$version_arrow"
 
+    compile "org.apache.arrow:arrow-flight:$version_arrow"
+    compile "org.apache.arrow:arrow-plasma:$version_arrow"
+    compile "org.apache.arrow:arrow-jdbc:$version_arrow"
+    compile "org.apache.arrow:arrow-tools:$version_arrow"
+    compile "org.apache.arrow:arrow-vector:$version_arrow"
+    compile "org.apache.arrow:arrow-memory:$version_arrow"
+    compile "org.apache.arrow:arrow-format:$version_arrow"
+    compile "org.apache.arrow:arrow-java-root:$version_arrow"
+    
     // https://mvnrepository.com/artifact/org.apache.arrow/arrow-plasma
     compile group: 'org.apache.arrow', name: 'arrow-plasma', version: '0.11.0'
 
