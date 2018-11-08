@@ -13,7 +13,7 @@ public class arrow_test {
     // $ ./conda install pyarrow=0.11.* -c conda-forge
 
     // In Intellij, edit run configuration:
-    // VM Arguments: -Djava.library.path="~/.local/lib/miniconda3/lib/"
+    // VM Arguments: -Djava.library.path="/home/<USERNAME>/.local/lib/miniconda3/lib/"
 
     public static void main(String[] args) {
         System.out.println("Java libraries path: " + System.getProperty("java.library.path"));
