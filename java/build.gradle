@@ -1,12 +1,15 @@
 plugins {
     id "java"
     id "com.linkedin.python-sdist" version "0.8.10"
+    id "application"
 }
 
 group "koresigma"
 version "1.0-SNAPSHOT"
 
 sourceCompatibility = 1.8
+
+mainClassName = "arrow_test"
 
 ext {
     version_arrow = "0.11.0"
