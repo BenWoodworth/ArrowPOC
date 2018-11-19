@@ -1,0 +1,69 @@
+**I had to remove my miniconda stuff for this to work**
+**Getting plasma client object in java running**
+
+
+1.) Install cmake & libboost stuff. Copy/Paste into terminal:
+
+fedora:
+sudo dnf install cmake \
+     libboost-dev \
+     libboost-filesystem-dev \
+     libboost-system-dev \
+     libboost-regex-dev 
+
+ubuntu: 
+sudo apt-get install cmake \
+     libboost-dev \
+     libboost-filesystem-dev \
+     libboost-system-dev \
+     libboost-regex-dev 
+
+
+1.5) have to install Numpy with python-pip for some reason...
+
+sudo install python-pip
+pip install Numpy
+
+
+
+2.) Clone apache arrow repo:
+
+git clone https://github.com/apache/arrow.git
+
+
+3.) cd into arrow/cpp and make a release directory:
+
+cd arrow/cpp
+mkdir release
+cd release
+
+
+4.) run cmake to make another release directory inside this one:
+
+cmake .. -DCMAKE_BUILD_TYPE=Release
+
+
+5.) cd into arrow/java:
+
+cd ../../java
+
+
+
+6.) Run:
+
+mvn clean install -pl plasma -am -Dmaven.test.skip
+
+
+
+7.) cd into plasma
+
+cd plasma
+
+
+8.) run the test script:
+
+./test.sh 
+
+
+
+
