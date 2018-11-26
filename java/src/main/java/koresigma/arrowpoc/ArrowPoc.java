@@ -4,7 +4,7 @@ import org.apache.arrow.plasma.PlasmaClient;
 
 import java.nio.file.Paths;
 
-public class Main {
+public class ArrowPoc {
 
     // Install Miniconda for Python 3
     // To directory: ~/.local/lib/miniconda3/

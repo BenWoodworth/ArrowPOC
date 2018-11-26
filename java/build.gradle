@@ -9,7 +9,7 @@ version "1.0-SNAPSHOT"
 
 sourceCompatibility = 1.8
 
-mainClassName = "arrow_test"
+mainClassName = "koresigma.arrowpoc.ArrowPoc"
 
 ext {
     version_arrow = "0.11.0"
