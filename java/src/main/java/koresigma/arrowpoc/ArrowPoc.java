@@ -6,17 +6,6 @@ import java.nio.file.Paths;
 
 public class ArrowPoc {
 
-    // Install Miniconda for Python 3
-    // To directory: ~/.local/lib/miniconda3/
-
-    // Install Arrow libraries:
-    // $ cd ~/.local/lib/miniconda3/bin/
-    // $ ./conda install arrow-cpp=0.11.* -c conda-forge
-    // $ ./conda install pyarrow=0.11.* -c conda-forge
-
-    // In Intellij, edit run configuration:
-    // VM Arguments: -Djava.library.path="/home/<USERNAME>/.local/lib/miniconda3/lib/"
-
     public static void main(String[] args) {
         System.out.println("Java libraries path: " + System.getProperty("java.library.path"));
 

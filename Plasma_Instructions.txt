@@ -6,24 +6,25 @@
 
 fedora:
 sudo dnf install cmake \
-     libboost-dev \
-     libboost-filesystem-dev \
-     libboost-system-dev \
-     libboost-regex-dev 
+                 qt-devel \
+                 boost \
+                 boost-devel \
+                 boost-filesystem \
+                 boost-system \
+                 boost-regex \
+                 python2-devel
 
 ubuntu: 
 sudo apt-get install cmake \
-     libboost-dev \
-     libboost-filesystem-dev \
-     libboost-system-dev \
-     libboost-regex-dev 
+                     libboost-dev \
+                     libboost-filesystem-dev \
+                     libboost-system-dev \
+                     libboost-regex-dev
 
 
 1.5) have to install Numpy with python-pip for some reason...
 
-sudo install python-pip
-pip install Numpy
-
+pip install Numpy --user
 
 
 2.) Clone apache arrow repo:
