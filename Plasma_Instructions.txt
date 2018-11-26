@@ -63,8 +63,9 @@ cd plasma
 
 8.) run the test script:
 
-./test.sh 
+./test.sh
 
 
-
-
+9.) Install the libraries
+cd ../../cpp/release/release
+sudo cp * /usr/lib

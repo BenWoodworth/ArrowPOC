@@ -2,36 +2,12 @@ package koresigma.arrowpoc;
 
 import org.apache.arrow.plasma.PlasmaClient;
 
-import java.nio.file.Paths;
-
 public class ArrowPoc {
 
     public static void main(String[] args) {
-        System.out.println("Java libraries path: " + System.getProperty("java.library.path"));
+        System.out.println(System.getProperty("java.library.path"));
 
-        String[] libs = new String[]{
-                "~/.local/lib/miniconda3/pkgs/icu-58.2-hfc679d8_0/lib/libicui18n.so.58",
-                "~/.local/lib/miniconda3/pkgs/icu-58.2-hfc679d8_0/lib/libicudata.so.58",
-                "~/.local/lib/miniconda3/pkgs/boost-cpp-1.68.0-h3a22d5f_0/lib/libboost_regex.so.1.68.0",
-                "~/.local/lib/miniconda3/pkgs/boost-cpp-1.68.0-h3a22d5f_0/lib/libboost_filesystem.so.1.68.0",
-                "~/.local/lib/miniconda3/pkgs/boost-cpp-1.68.0-h3a22d5f_0/lib/libboost_system.so.1.68.0",
-                "~/.local/lib/miniconda3/pkgs/arrow-cpp-0.11.1-py36h3bd774a_0/lib/libplasma.so.11.1.0"
-        };
-
-        // Replace '~' in paths with home directory
-        String homeDir = System.getProperty("user.home");
-        for (int i = 0; i < libs.length; i++) {
-            libs[i] = libs[i].replaceFirst("^~", homeDir);
-        }
-
-        for (String lib : libs) {
-            String libAbsolutePath = Paths
-                    .get(lib)
-                    .toAbsolutePath()
-                    .toString();
-
-            System.load(libAbsolutePath);
-        }
+        System.loadLibrary("plasma");
 
         client();
     }
@@ -40,7 +16,6 @@ public class ArrowPoc {
         PlasmaClient plasmaClient = new PlasmaClient("/tmp/plasma", "", 0);
         byte[] byteObject = null;
 
-
-//        plasmaClient.put();
+        System.out.println("hello");
     }
 }
