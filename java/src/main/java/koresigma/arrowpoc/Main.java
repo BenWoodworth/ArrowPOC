@@ -1,8 +1,10 @@
+package koresigma.arrowpoc;
+
 import org.apache.arrow.plasma.PlasmaClient;
 
 import java.nio.file.Paths;
 
-public class arrow_test {
+public class Main {
 
     // Install Miniconda for Python 3
     // To directory: ~/.local/lib/miniconda3/
