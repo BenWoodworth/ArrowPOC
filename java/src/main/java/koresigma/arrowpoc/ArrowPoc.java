@@ -5,9 +5,7 @@ import org.apache.arrow.plasma.PlasmaClient;
 public class ArrowPoc {
 
     public static void main(String[] args) {
-        System.out.println(System.getProperty("java.library.path"));
-
-        System.loadLibrary("plasma");
+        System.loadLibrary("plasma_java");
 
         client();
     }
