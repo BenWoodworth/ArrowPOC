@@ -7,6 +7,12 @@ class PlasmaObject(
     private val objectId: ByteArray
 ) {
 
+    init {
+        assert(objectId.size == 20) {
+            "Plasma object id must be 20 bytes long"
+        }
+    }
+
     val hash: ByteArray
         get() = client.hash(this.objectId)
 

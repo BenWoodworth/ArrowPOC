@@ -1,10 +1,10 @@
 package koresigma.arrowpoc
 
-fun PlasmaObject.putBytes(vararg values: Byte) {
+fun PlasmaObject.setBytes(vararg values: Byte) {
     setBytes(values)
 }
 
-fun PlasmaObject.putString(value: String) {
+fun PlasmaObject.setString(value: String) {
     return setBytes(value.toByteArray())
 }
 
@@ -12,7 +12,7 @@ fun PlasmaObject.getString(timeoutMs: Int? = null): String {
     return getBytes(timeoutMs).toString()
 }
 
-fun PlasmaObject.putLong(value: Long) {
+fun PlasmaObject.setLong(value: Long) {
     var bytes = ByteArray(4) { byte ->
         (value shr (byte * 8) and 0xFF).toByte()
     }

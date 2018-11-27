@@ -5,12 +5,18 @@ class ArrowPoc {
     fun test(plasmaStore: PlasmaStore) {
         val client = plasmaStore.createClient()
 
-        val obj = client.getObject("helloworld")
+        val id = ByteArray(20) { it.toByte() }
+
+        val obj = client.getObject(id)
+
+        obj.setString("Hello, world!")
 
         println(
             """
+                ========================================
                 Exists: ${obj.exists}
                 Value:  ${obj.getString()}
+                ========================================
             """.trimIndent()
         )
     }
