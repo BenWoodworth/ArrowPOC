@@ -70,6 +70,6 @@ cd plasma
 
 cd ../../cpp/release/release
 pip install pyarrow --user
-sudo cp lib* /usr/lib
-sudo cp file-to-stream plasma_store_server stream-to-file /usr/bin
-
+sudo cp -d lib* /usr/lib
+sudo cp -d file-to-stream plasma_store_server stream-to-file /usr/bin
+sudo /sbin/ldconfig -v
