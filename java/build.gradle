@@ -1,41 +1,42 @@
-plugins {
-    id "java"
-    id "com.linkedin.python-sdist" version "0.8.10"
-    id "application"
+buildscript {
+    ext {
+        version_java = "1.8"
+        version_kotlin = "1.3.10"
+        version_arrow = "0.11.0"
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$version_kotlin"
+    }
 }
+
+apply plugin: "java"
+apply plugin: "kotlin"
+apply plugin: "application"
 
 group "koresigma"
 version "1.0-SNAPSHOT"
 
-sourceCompatibility = 1.8
+sourceCompatibility = version_java
+targetCompatibility = version_java
 
 mainClassName = "koresigma.arrowpoc.ArrowPoc"
 
-ext {
-    version_arrow = "0.11.0"
-}
-
 repositories {
     mavenCentral()
-    pyGradlePyPi()
 }
 
 dependencies {
-//    compile "org.apache.arrow:arrow-java-root:$version_arrow"
-//    compile "org.apache.arrow:arrow-plasma:$version_arrow"
-
-    compile "org.apache.arrow:arrow-flight:$version_arrow"
     compile "org.apache.arrow:arrow-plasma:$version_arrow"
-    compile "org.apache.arrow:arrow-jdbc:$version_arrow"
-    compile "org.apache.arrow:arrow-tools:$version_arrow"
-    compile "org.apache.arrow:arrow-vector:$version_arrow"
-    compile "org.apache.arrow:arrow-memory:$version_arrow"
-    compile "org.apache.arrow:arrow-format:$version_arrow"
-    compile "org.apache.arrow:arrow-java-root:$version_arrow"
-    
-    // https://mvnrepository.com/artifact/org.apache.arrow/arrow-plasma
-    compile group: 'org.apache.arrow', name: 'arrow-plasma', version: '0.11.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
 
-
-    python "pypi:pyarrow:$version_arrow"
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = version_java
+    }
 }
