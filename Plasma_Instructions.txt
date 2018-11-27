@@ -69,4 +69,7 @@ cd plasma
 9.) Install the libraries
 
 cd ../../cpp/release/release
-sudo cp * /usr/lib
+pip install pyarrow --user
+sudo cp lib* /usr/lib
+sudo cp file-to-stream plasma_store_server stream-to-file /usr/bin
+
