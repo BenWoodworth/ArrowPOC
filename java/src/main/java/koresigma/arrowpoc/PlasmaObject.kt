@@ -19,7 +19,7 @@ class PlasmaObject(
     val exists: Boolean
         get() = client.contains(this.objectId)
 
-    fun setBytes(bytes: ByteArray, metadata: ByteArray = byteArrayOf()) {
+    fun setBytes(bytes: ByteArray, metadata: ByteArray? = null) {
         client.put(this.objectId, bytes, metadata)
     }
 
