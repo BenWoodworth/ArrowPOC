@@ -32,41 +32,46 @@ pip install Numpy --user
 git clone https://github.com/apache/arrow.git
 
 
-3.) cd into arrow/cpp and make a release directory:
+3.) Checkout the tag for the version to build:
 
-cd arrow/cpp
+cd arrow
+git checkout -b origin/master tags/apache-arrow-0.11.0
+
+4.) cd into arrow/cpp and make a release directory:
+
+cd cpp
 mkdir release
 cd release
 
 
-4.) run cmake to make another release directory inside this one:
+5.) run cmake to make another release directory inside this one:
 
 cmake .. -DCMAKE_BUILD_TYPE=Release
 
 
-5.) cd into arrow/java:
+6.) cd into arrow/java:
 
 cd ../../java
 
 
 
-6.) Run:
+7.) Run:
 
 mvn clean install -pl plasma -am -Dmaven.test.skip
 
 
 
-7.) cd into plasma
+8.) cd into plasma
 
 cd plasma
 
 
-8.) run the test script:
+9.) run the test script:
 
 ./test.sh
 
 
-9.) Install the libraries
+10.) Install the libraries
 
 cd ../../cpp/release/release
 pip install pyarrow --user
