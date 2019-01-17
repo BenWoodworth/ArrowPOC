@@ -24,6 +24,8 @@ class ArrowPoc {
 
         println(
             """
+                Checking for put string...
+
                 ========================================
                 Exists: ${obj.exists}
                 Value:  ${obj.getString()}
