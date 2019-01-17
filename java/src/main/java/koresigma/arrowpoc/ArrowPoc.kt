@@ -15,20 +15,12 @@ class ArrowPoc {
 
     private fun test(client: PlasmaClient) {
         val id = ByteArray(20) { 1 }
-        val value = ByteArray(20) { 1 }
 
         val obj = client.getObject(id)
 
-        println(client.contains(id))
-
-        client.put(id, value, null)
-
-//        client.wait(arrayOf(id), 1000, 1)
-//        client.evict(200)
-//        obj.fetch()
-//        obj.setBytes(value)
-        println(client.contains(id))
-//        obj.release()
+        val str = "Hello, world!"
+        println("Putting '$str'")
+        obj.setString(str)
 
         println(
             """
@@ -38,7 +30,5 @@ class ArrowPoc {
                 ========================================
             """.trimIndent()
         )
-
-        println("XXX")
     }
 }

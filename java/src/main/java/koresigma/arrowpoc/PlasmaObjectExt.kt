@@ -5,11 +5,11 @@ fun PlasmaObject.setBytes(vararg values: Byte) {
 }
 
 fun PlasmaObject.setString(value: String) {
-    return setBytes(value.toByteArray())
+    return setBytes(value.toByteArray(Charsets.UTF_8))
 }
 
 fun PlasmaObject.getString(timeoutMs: Int? = null): String {
-    return getBytes(timeoutMs).toString()
+    return getBytes(timeoutMs).toString(Charsets.UTF_8)
 }
 
 fun PlasmaObject.setLong(value: Long) {

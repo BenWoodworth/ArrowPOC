@@ -12,11 +12,9 @@ fun main(args: Array<String>) {
     }
 
     val arrowPoc = ArrowPoc()
-//    val store = PlasmaStore(Paths.get(pathArg), 1_000_000L)
+    val store = PlasmaStore(Paths.get(pathArg), 1_000_000L)
 
-//    store.use {
-//        arrowPoc.test(store)
-//    }
-
-    arrowPoc.testWithExistingSocket(Paths.get("$pathArg"))
+    store.use {
+        arrowPoc.test(store)
+    }
 }
