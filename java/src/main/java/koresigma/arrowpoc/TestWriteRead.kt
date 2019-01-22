@@ -3,7 +3,7 @@ package koresigma.arrowpoc
 import org.apache.arrow.plasma.PlasmaClient
 import java.nio.file.Path
 
-class ArrowPoc {
+class TestWriteRead {
 
     fun test(plasmaStore: PlasmaStore) {
         test(plasmaStore.createClient())
