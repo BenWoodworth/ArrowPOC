@@ -1,16 +1,31 @@
-import pyarrow.plasma as plasma
-import numpy as np
-import pprint
+import pyarrow.plasma
+
+
+def read_obj(plasma_store, obj_id):
+    client = _connect(plasma_store)
+    obj = client.get(obj_id)
+
+    return obj
+
+
+def write_obj(plasma_store, obj_id, obj_val):
+    client = _connect(plasma_store)
+    obj_id = client.put(obj_val)
+
+    return obj_id
+
+
+# Return client
+def _connect(plasma_store):
+    client = plasma.connect(plasma_store)
+    return client
 
 
 def main():
-    client = plasma.connect("/tmp/plasma", "", 0)
-    object_id = client.put("hello, world")
-    client.put(1)
-    client.put(1.2)
-    client.put("dsfasfjds;lkdsjflkds")
-    pprint.pprint(len(client.list()))
+    o = write_obj("/tmp/plasma", "1", "hi")
+    read_obj("/tmp/plasma", o)
     return
+
 
 if __name__ == '__main__':
     main()
