@@ -11,10 +11,12 @@ fun main(args: Array<String>) {
         else -> throw IllegalArgumentException("Takes one option argument: plasma store path")
     }
 
-    val arrowPoc = ArrowPoc()
+    val arrowPoc = TestWriteRead()
     val store = PlasmaStore(Paths.get(pathArg), 1_000_000L)
 
     store.use {
         arrowPoc.test(store)
+
+//        testPython(store)
     }
 }
