@@ -33,6 +33,7 @@ repositories {
 dependencies {
     compile "org.apache.arrow:arrow-plasma:$version_arrow"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.apache.arrow:arrow-vector:$version_arrow"
 }
 
 compileKotlin {
