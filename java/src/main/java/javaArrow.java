@@ -1,4 +1,5 @@
 import io.netty.buffer.ArrowBuf;
+import koresigma.arrowpoc.ByteUtilsKt;
 import org.apache.arrow.plasma.PlasmaClient;
 import org.apache.arrow.plasma.ObjectStoreLink;
 import org.apache.arrow.memory.RootAllocator;
@@ -8,29 +9,12 @@ public class javaArrow {
     public static void main(String[] args) {
         System.loadLibrary("plasma_java");
         PlasmaClient client = new PlasmaClient("/tmp/store", "", 0);
-        byte[] id = new byte[]{(byte) 0x44,
-                (byte) 0x7c,
-                (byte) 0x91,
-                (byte) 0xee,
-                (byte) 0xa0,
-                (byte) 0x46,
-                (byte) 0x8b,
-                (byte) 0x57,
-                (byte) 0x64,
-                (byte) 0xab,
-                (byte) 0x7f,
-                (byte) 0x14,
-                (byte) 0xd8,
-                (byte) 0x67,
-                (byte) 0x4f,
-                (byte) 0xc1,
-                (byte) 0x59,
-                (byte) 0x27,
-                (byte) 0xbb,
-                (byte) 0x49
-        };
 
-        System.out.println(client.get(id, 0, false));
+        byte[] id = ByteUtilsKt.getHexBytes("447c91eea0468b5764ab7f14d8674fc15927bb49");
+        byte[] value = client.get(id, 0, false);
+
+        System.out.println(ByteUtilsKt.toHexString(value));
+
 //
 //        byte[] info = client.get(id, 0, false);
 //        RootAllocator allocator = new RootAllocator(Long.MAX_VALUE);
