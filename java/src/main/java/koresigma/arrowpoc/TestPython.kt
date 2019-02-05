@@ -7,7 +7,7 @@ import java.io.File
 fun testPython(store: PlasmaStore) {
     val client = store.createClient()
 
-    val id = ByteArray(20) { it.toByte() }
+    val id = ByteArray(20) { 0 }
     val value = "F00DBEEF".getHexBytes()
 
     val pythonFile = File("arrow_test.py")
@@ -27,18 +27,6 @@ fun testPython(store: PlasmaStore) {
     println("Java:   Reading from store")
     println(client.get(id, 1000, false).toHexString())
     println()
-}
-
-fun ByteArray.toHexString(): String {
-    return joinToString("") {
-        it.toString(16).toUpperCase()
-    }
-}
-
-fun String.getHexBytes(): ByteArray {
-    return ByteArray(length / 2) { i ->
-        "${this[i * 2]}${this[i * 2 + 1]}".toByte(16)
-    }
 }
 
 fun runPython(file: File, vararg args: String): String {
