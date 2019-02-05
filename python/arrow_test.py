@@ -1,4 +1,4 @@
-import pyarrow.plasma
+import pyarrow.plasma as plasma
 
 
 def read_obj(plasma_store, obj_id):
@@ -17,13 +17,15 @@ def write_obj(plasma_store, obj_id, obj_val):
 
 # Return client
 def _connect(plasma_store):
-    client = plasma.connect(plasma_store)
+    client = plasma.connect(plasma_store, "", 0)
     return client
 
 
 def main():
     o = write_obj("/tmp/plasma", "1", "hi")
-    read_obj("/tmp/plasma", o)
+    print(o)
+    x = read_obj("/tmp/plasma", o)
+    print(x)
     return
 
 
