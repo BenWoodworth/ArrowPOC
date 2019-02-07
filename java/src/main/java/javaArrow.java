@@ -1,45 +1,46 @@
 import io.netty.buffer.ArrowBuf;
 import koresigma.arrowpoc.ByteUtilsKt;
+import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.plasma.PlasmaClient;
 import org.apache.arrow.plasma.ObjectStoreLink;
 import org.apache.arrow.memory.RootAllocator;
+import org.apache.arrow.flatbuf.RecordBatch;
+import org.apache.arrow.vector.VectorSchemaRoot;
+import org.apache.arrow.vector.ipc.ArrowStreamReader;
+import org.apache.arrow.vector.types.pojo.Schema;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class javaArrow {
+
+    static ArrowBuf buf(byte[] bytes) {
+        BufferAllocator allocator = new RootAllocator(Long.MAX_VALUE);
+        ArrowBuf buffer = allocator.buffer(bytes.length);
+        buffer.writeBytes(bytes);
+        return buffer;
+    }
 
     public static void main(String[] args) {
         System.loadLibrary("plasma_java");
         PlasmaClient client = new PlasmaClient("/tmp/store", "", 0);
 
-        byte[] id = ByteUtilsKt.getHexBytes("447c91eea0468b5764ab7f14d8674fc15927bb49");
+        byte[] id = ByteUtilsKt.getHexBytes("0bf5ed24d1c95946f4ab1791f9238153e8b9147b");
         byte[] value = client.get(id, 0, false);
-
-        System.out.println(ByteUtilsKt.toHexString(value));
-
-//
-//        byte[] info = client.get(id, 0, false);
-//        RootAllocator allocator = new RootAllocator(Long.MAX_VALUE);
-//        ArrowBuf buffer = allocator.buffer(info.length);
-//        buffer.writeBytes(info);
-//        System.out.println(buffer);
-
-
-//        try {
-//            javaDriver driver = new javaDriver();
-//            ObjectStoreLink pLink = driver.getpLink();
-//            System.out.println(plink);
-//
-//            String hello = "hello";
-//            byte[] id1 = new byte[20];
-//            Arrays.fill(id1, (byte) 1);
-//            byte[] val1 = hello.getBytes();
-//            byte[] meta1 = new byte[20];
-//            Arrays.fill(meta1, (byte) 2);
-//            pLink.put(id1, val1, meta1);
-//            System.out.println(pLink.contains(id1));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
+        ByteArrayInputStream in = new ByteArrayInputStream(value);
+        BufferAllocator allocator = new RootAllocator(Long.MAX_VALUE);
+        ArrowStreamReader reader = new ArrowStreamReader(in, allocator);
+        try{
+            Schema readSchema = reader.getVectorSchemaRoot().getSchema();
+            while(reader.loadNextBatch()){
+                VectorSchemaRoot vsr = reader.getVectorSchemaRoot();
+                System.out.println(vsr.contentToTSVString());
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
 }
