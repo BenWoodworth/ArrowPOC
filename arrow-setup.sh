@@ -38,10 +38,10 @@ pushd "$ROOT" > /dev/null
                 echo "Building Plasma..."
                 mvn clean install -pl plasma -am -Dmaven.test.skip &>> "$LOG"
                 
-                #pushd ./plasma &>> "$LOG"
-                #    echo "Testing Plasma build..."
-                #    sh ./test.sh &>> "$LOG"
-                #popd &>> "$LOG"
+                pushd ./plasma &>> "$LOG"
+                    echo "Testing Plasma..."
+                    sh ./test.sh &>> "$LOG"
+                popd &>> "$LOG"
             popd &>> "$LOG"
         popd &>> "$LOG"
     
