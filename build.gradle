@@ -2,7 +2,6 @@ buildscript {
     ext {
         version_java = "1.8"
         version_kotlin = "1.3.11"
-        version_arrow = "0.11.0"
     }
 
     repositories {
@@ -24,14 +23,25 @@ version "1.0-SNAPSHOT"
 sourceCompatibility = version_java
 targetCompatibility = version_java
 
+//classpath += "arrow/lib"
+
 mainClassName = "koresigma.arrowpoc.MainKt"
 
 repositories {
     mavenCentral()
 }
 
+sourceSets {
+    main {
+        java.srcDirs = ['src/java']
+        resources.srcDirs = ['src/python']
+    }
+}
+
 dependencies {
-    compile "org.apache.arrow:arrow-plasma:$version_arrow"
+//    compile "org.apache.arrow:arrow-plasma:$version_arrow"
+    compile files("arrow/bin")
+    
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 

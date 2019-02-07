@@ -8,7 +8,7 @@ LOG="$ARROW_DIR/log.txt"
    
 set -e
 pushd "$ROOT" > /dev/null
-    if [ -d "$ARROW_DIR" ]
+    if [[ -d "$ARROW_DIR" ]]
     then
         echo "Directory $ARROW_DIR already exists."
         exit 1
