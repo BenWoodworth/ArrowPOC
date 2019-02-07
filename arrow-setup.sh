@@ -7,7 +7,7 @@ ARROW_GIT_TAG="apache-arrow-0.12.0"
 LOG="$ARROW_DIR/log.txt"
    
 set -e
-pushd "$(dirname $0)" > /dev/null
+pushd "$ROOT" > /dev/null
     if [ -d "$ARROW_DIR" ]
     then
         echo "Directory $ARROW_DIR already exists."
@@ -24,8 +24,8 @@ pushd "$(dirname $0)" > /dev/null
         echo "Cloning '$ARROW_GIT_REPO'..."
         git clone "https://github.com/apache/arrow.git" ./repo &>> "$LOG"
         
-        echo "Checking out tag '$ARROW_GIT_TAG'..."
         pushd ./repo > "$LOG"
+            echo "Checking out tag '$ARROW_GIT_TAG'..."
             git checkout -b "origin/master" "tags/apache-arrow-0.12.0" &>> "$LOG"
             
             mkdir ./cpp/release &>> "$LOG"
@@ -35,13 +35,13 @@ pushd "$(dirname $0)" > /dev/null
             popd &>> "$LOG"
             
             pushd ./java &>> "$LOG"
-                echo "Building Java source..."
+                echo "Building Plasma..."
                 mvn clean install -pl plasma -am -Dmaven.test.skip &>> "$LOG"
                 
-                pushd ./plasma &>> "$LOG"
-                    echo "Testing Plasma build..."
-                    sh ./test.sh &>> "$LOG"
-                popd &>> "$LOG"
+                #pushd ./plasma &>> "$LOG"
+                #    echo "Testing Plasma build..."
+                #    sh ./test.sh &>> "$LOG"
+                #popd &>> "$LOG"
             popd &>> "$LOG"
         popd &>> "$LOG"
     
