@@ -44,8 +44,8 @@ dependencies {
 //    compile "org.apache.arrow:arrow-plasma:$version_arrow"
     compile files("arrow/bin/arrow-plasma-${version_arrow}.jar")
     
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    compile "net.sf.py4j:py4j"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version_kotlin"
+    compile "net.sf.py4j:py4j:$version_py4j"
 }
 
 compileKotlin {
