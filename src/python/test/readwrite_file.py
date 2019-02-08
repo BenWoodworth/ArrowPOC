@@ -1,14 +1,14 @@
 class ReadWriteFile:
-    def __init__(self, path):
+    def __init__(self, path: str):
         self.path = path
 
-    def read(self):
+    def read(self) -> bytes:
         f = open(self.path, 'rb')
         contents = f.read()
         f.close()
         return contents
 
-    def write(self, byte_array):
+    def write(self, data: bytes):
         f = open(self.path, 'wb')
-        f.write(byte_array)
+        f.write(data)
         f.close()

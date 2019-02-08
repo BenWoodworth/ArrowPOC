@@ -6,22 +6,22 @@ class ReadWritePlasma:
         self.store_path = store_path
         self.obj_id = obj_id
 
-    def read(self):
+    def read(self) -> bytes:
         client = _connect(self.store_path)
         obj = client.get(self.obj_id)
         return obj
 
-    def write(self, obj_val):
+    def write(self, data: bytes):
         client = _connect(self.store_path)
-        client.put(obj_val, self.obj_id)
+        client.put(data, self.obj_id)
         return
 
 
 # Write to the Plasma Store without having a predefined object ID
 # Stores the object and returns it's (new) ID
-def write_plasma_without_id(store_path, obj_val):
+def write_plasma_without_id(store_path: str, data: object) -> bytes:
     client = _connect(store_path)
-    obj_id = client.put(obj_val)
+    obj_id = client.put(data)
     return obj_id
 
 

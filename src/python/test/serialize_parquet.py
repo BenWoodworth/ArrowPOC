@@ -2,9 +2,9 @@ import pyarrow.parquet as pq
 
 
 class SerializeParquet:
-    def serialize(self, data):
-        pq.write_table(data, 'example.parquet')
+    def serialize(self, data: bytes) -> bytes:
+        pq.write_table(file, 'example.parquet')
         return
 
-    def deserialize(self, path):
+    def deserialize(self, data: bytes) -> bytes:
         return pq.read_table(path)
