@@ -23,7 +23,7 @@ class PlasmaStore(
     }
 
 
-    fun getClient() {
-        PlasmaClient(path.toString(), "", 10)
+    fun getClient(): PlasmaClient {
+        return PlasmaClient(path.toString(), "", 10)
     }
 }
