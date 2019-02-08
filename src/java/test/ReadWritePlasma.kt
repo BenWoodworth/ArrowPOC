@@ -2,13 +2,18 @@ package test
 
 import PlasmaStore
 
-class ReadWritePlasma(val store: PlasmaStore): ReadWrite {
+class ReadWritePlasma(
+    private val store: PlasmaStore,
+    private val objectId: ByteArray
+): ReadWrite {
+
+    private val client = store.createClient()
 
     override fun read(): ByteArray {
-        TODO("not implemented")
+        return client.get(objectId, 1000, false)
     }
 
     override fun write(data: ByteArray) {
-        TODO("not implemented")
+        client.put(objectId, data, null)
     }
 }
