@@ -1,16 +1,16 @@
 import pyarrow.plasma as plasma
 
 
-def read(store_path, obj_id):
-    client = _connect(store_path)
-    obj = client.get(obj_id)
-    return obj
+class ReadWritePlasma:
+    def read(store_path, obj_id):
+        client = _connect(store_path)
+        obj = client.get(obj_id)
+        return obj
 
-
-def write(store_path, obj_id, obj_val):
-    client = _connect(store_path)
-    client.put(obj_val, obj_id)
-    return
+    def write(store_path, obj_id, obj_val):
+        client = _connect(store_path)
+        client.put(obj_val, obj_id)
+        return
 
 
 # Write to the Plasma Store without having a predefined object ID

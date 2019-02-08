@@ -1,9 +1,9 @@
 import json
 
 
-def serialize(data):
-    return json.dumps(data)
+class SerializeJson:
+    def serialize(data):
+        return json.dumps(data)
 
-
-def deserialize(json_string):
-    return json.loads(json_string)
+    def deserialize(json_string):
+        return json.loads(json_string)
