@@ -1,13 +1,13 @@
 import pyarrow.plasma as plasma
 
 
-def read_plasma(store_path, obj_id):
+def read(store_path, obj_id):
     client = _connect(store_path)
     obj = client.get(obj_id)
     return obj
 
 
-def write_plasma(store_path, obj_id, obj_val):
+def write(store_path, obj_id, obj_val):
     client = _connect(store_path)
     client.put(obj_val, obj_id)
     return
