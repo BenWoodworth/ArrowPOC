@@ -8,7 +8,7 @@ class PlasmaStore(
 
     private val server = ProcessBuilder()
         .command(
-            "python_store_server",
+            "plasma_store_server",
             "-s", path.toString(),
             "-m", bytes.toString()
         )
@@ -23,7 +23,7 @@ class PlasmaStore(
     }
 
 
-    fun getClient(): PlasmaClient {
-        return PlasmaClient(path.toString(), "", 10)
+    fun createClient(): PlasmaClient {
+        return PlasmaClient(path.toString(), "", 0)
     }
 }
