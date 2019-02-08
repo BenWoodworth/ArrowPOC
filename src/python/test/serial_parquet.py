@@ -1,9 +1,10 @@
-
-def serialize_parquet(data: object) -> bytearray:
-    # TODO
-    pass
+import pyarrow.parquet as pq
 
 
-def deserialize_parquet(json: bytearray) -> object:
-    # TODO
-    pass
+def serialize_parquet(data):
+    pq.write_table(data, 'example.parquet')
+    return
+
+
+def deserialize_parquet(path):
+    return pq.read_table(path)

@@ -1,9 +1,9 @@
-
-def serialize_json(data: object) -> bytearray:
-    # TODO
-    pass
+import json
 
 
-def deserialize_json(json: bytearray) -> object:
-    # TODO
-    pass
+def serialize_json(data):
+    return json.dumps(data)
+
+
+def deserialize_json(json_string):
+    return json.loads(json_string)

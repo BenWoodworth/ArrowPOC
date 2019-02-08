@@ -1,9 +1,11 @@
+def read_file(path):
+    f = open(path, 'rb')
+    contents = f.read()
+    f.close()
+    return contents
 
-def read_file(path: str) -> bytearray:
-    # TODO
-    pass
 
-
-def write_file(path: str, data: bytearray):
-    # TODO
-    pass
+def write_file(path, byte_array):
+    f = open(path, 'wb')
+    f.write(byte_array)
+    f.close()
