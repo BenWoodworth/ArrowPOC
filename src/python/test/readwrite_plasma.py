@@ -2,14 +2,18 @@ import pyarrow.plasma as plasma
 
 
 class ReadWritePlasma:
-    def read(self, store_path, obj_id):
-        client = _connect(store_path)
-        obj = client.get(obj_id)
+    def __init__(self, store_path, obj_id):
+        self.store_path = store_path
+        self.obj_id = obj_id
+
+    def read(self):
+        client = _connect(self.store_path)
+        obj = client.get(self.obj_id)
         return obj
 
-    def write(self, store_path, obj_id, obj_val):
-        client = _connect(store_path)
-        client.put(obj_val, obj_id)
+    def write(self, obj_val):
+        client = _connect(self.store_path)
+        client.put(obj_val, self.obj_id)
         return
 
 
