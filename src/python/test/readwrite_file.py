@@ -1,11 +1,11 @@
 class ReadWriteFile:
-    def read(path):
+    def read(self, path):
         f = open(path, 'rb')
         contents = f.read()
         f.close()
         return contents
 
-    def write(path, byte_array):
+    def write(self, path, byte_array):
         f = open(path, 'wb')
         f.write(byte_array)
         f.close()
