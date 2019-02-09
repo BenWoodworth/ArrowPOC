@@ -1,15 +1,15 @@
 import org.apache.arrow.plasma.PlasmaClient
-import java.nio.file.Path
+import java.io.File
 
 class PlasmaStore(
-    val path: Path,
+    val location: File,
     bytes: Int
 ) : AutoCloseable {
 
     private val server = ProcessBuilder()
         .command(
             "plasma_store_server",
-            "-s", path.toString(),
+            "-s", location.toString(),
             "-m", bytes.toString()
         )
         .start()
@@ -24,6 +24,6 @@ class PlasmaStore(
 
 
     fun createClient(): PlasmaClient {
-        return PlasmaClient(path.toString(), "", 0)
+        return PlasmaClient(location.toString(), "", 0)
     }
 }

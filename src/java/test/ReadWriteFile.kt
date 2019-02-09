@@ -1,14 +1,14 @@
 package test
 
-import java.nio.file.Path
+import java.io.File
 
-class ReadWriteFile(val file: Path): ReadWrite {
+class ReadWriteFile(private val file: File): ReadWrite {
 
     override fun read(): ByteArray {
-        TODO("not implemented")
+        return file.readBytes()
     }
 
     override fun write(data: ByteArray) {
-        TODO("not implemented")
+        file.writeBytes(data)
     }
 }
