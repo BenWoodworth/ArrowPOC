@@ -1,7 +1,7 @@
-import java.nio.file.Paths
+import java.io.File
 
 fun main(args: Array<String>) {
-    PlasmaStore(Paths.get("/tmp/plasma"), 1000).use { store ->
+    PlasmaStore(File("/tmp/plasma"), 1000).use { store ->
         val client = store.createClient()
 
         val id = ByteArray(20)
