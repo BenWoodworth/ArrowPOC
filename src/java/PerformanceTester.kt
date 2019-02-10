@@ -5,27 +5,15 @@ class PerformanceTester(
     private val serializeServices: List<ServiceInfo<Serialize>>,
     private val readWriteServices: List<ServiceInfo<ReadWrite>>
 ) {
-
-    class ServiceInfo<TService>(
-        val platform: String,
-        val format: String,
-        val service: TService
-    )
-
-    class DataInfo(
-        val data: Any?,
-        val name: String
-    )
-
-    class TestResult(
-        fromPlatform: String,
-        toPlatform: String,
-        serialFormat: String,
-        readWriteFormat: String,
-        serializeDuration: Long,
-        writeDuration: Long,
-        readDuration: Long,
-        deserilizeDuration: Long
+    data class TestResult(
+        val fromPlatform: String,
+        val toPlatform: String,
+        val serialFormat: String,
+        val readWriteFormat: String,
+        val serializeDuration: Long,
+        val writeDuration: Long,
+        val readDuration: Long,
+        val deserializeDuration: Long
     )
 
     fun test(data: Any?): List<TestResult> {
@@ -73,7 +61,7 @@ class PerformanceTester(
             serializeDuration = time { serialized = serializer.service.serialize(data) },
             writeDuration = time { writer.service.write(serialized) },
             readDuration = time { read = reader.service.read() },
-            deserilizeDuration = time { deserializer.service.deserialize(read) }
+            deserializeDuration = time { deserializer.service.deserialize(read) }
         )
     }
 

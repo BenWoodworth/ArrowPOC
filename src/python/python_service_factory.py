@@ -7,7 +7,7 @@ from test.serialize_json import SerializeJson
 # noinspection PyPep8Naming,PyMethodMayBeStatic
 class PythonServiceFactory:
     class Java:
-        implements = ['ServiceFactory']
+        implements = ['PythonServiceFactory']
 
     def createReadWriteFile(self, file: str) -> ReadWriteFile:
         return ReadWriteFile(path=file)
