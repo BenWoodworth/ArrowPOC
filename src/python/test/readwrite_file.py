@@ -1,4 +1,7 @@
 class ReadWriteFile:
+    class Java:
+        implements = ['test.ReadWrite']
+
     def __init__(self, path: str):
         self.path = path
 
