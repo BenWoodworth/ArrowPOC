@@ -1,4 +1,4 @@
-class ReadWriteFile:
+class ReadWriteFilePy:
     class Java:
         implements = ['test.ReadWrite']
 

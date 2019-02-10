@@ -1,7 +1,7 @@
 import json
 
 
-class SerializeJson:
+class SerializeJsonPy:
     class Java:
         implements = ['test.Serialize']
 

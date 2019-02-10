@@ -9,4 +9,4 @@ if __name__ == '__main__':
     print("!!!Python B")
     gateway.entry_point.pythonEntry(PythonServiceFactory())
     print("!!!Python C")
-    # gateway.shutdown()
+    gateway.shutdown()

@@ -1,7 +1,7 @@
 import pyarrow.parquet as pq
 
 
-class SerializeParquet:
+class SerializeParquetPy:
     class Java:
         implements = ['test.Serialize']
 

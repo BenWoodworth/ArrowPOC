@@ -1,7 +1,7 @@
 import pyarrow.plasma as plasma
 
 
-class ReadWritePlasma:
+class ReadWritePlasmaPy:
     class Java:
         implements = ['test.ReadWrite']
 
