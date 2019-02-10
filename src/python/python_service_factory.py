@@ -4,6 +4,7 @@ from test.serialize_parquet import SerializeParquet
 from test.serialize_json import SerializeJson
 
 
+# noinspection PyPep8Naming,PyMethodMayBeStatic
 class PythonServiceFactory:
     class Java:
         implements = ['ServiceFactory']
@@ -11,8 +12,8 @@ class PythonServiceFactory:
     def createReadWriteFile(self, file: str) -> ReadWriteFile:
         return ReadWriteFile(path=file)
 
-    def createReadWritePlasma(self, storePath: str, objectId: str) -> ReadWritePlasma:
-        return ReadWritePlasma(store_path=storePath, obj_id=objectId)
+    def createReadWritePlasma(self, store_path: str, object_id: bytes) -> ReadWritePlasma:
+        return ReadWritePlasma(store_path=store_path, obj_id=object_id)
 
     def createSerializeJson(self) -> SerializeJson:
         return SerializeJson()

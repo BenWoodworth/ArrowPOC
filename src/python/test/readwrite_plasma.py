@@ -5,7 +5,7 @@ class ReadWritePlasma:
     class Java:
         implements = ['test.ReadWrite']
 
-    def __init__(self, store_path, obj_id):
+    def __init__(self, store_path: str, obj_id: bytes):
         self.store_path = store_path
         self.obj_id = obj_id
 
