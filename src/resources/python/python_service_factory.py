@@ -9,14 +9,14 @@ class PythonServiceFactory:
     class Java:
         implements = ['PythonServiceFactory']
 
-    def createReadWriteFile(self, file: str) -> ReadWriteFile:
+    def ReadWriteFilePy(self, file: str) -> ReadWriteFile:
         return ReadWriteFile(path=file)
 
-    def createReadWritePlasma(self, store_path: str, object_id: bytes) -> ReadWritePlasma:
+    def ReadWritePlasmaPy(self, store_path: str, object_id: bytes) -> ReadWritePlasma:
         return ReadWritePlasma(store_path=store_path, obj_id=object_id)
 
-    def createSerializeJson(self) -> SerializeJson:
+    def SerializeJsonPy(self) -> SerializeJson:
         return SerializeJson()
 
-    def createSerializeParquet(self) -> SerializeParquet:
+    def SerializeParquetPy(self) -> SerializeParquet:
         return SerializeParquet()
