@@ -7,9 +7,9 @@ class PerformanceTester(
 ) {
 
     class ServiceInfo<TService>(
-        val service: TService,
         val platform: String,
-        val format: String
+        val format: String,
+        val service: TService
     )
 
     class DataInfo(
