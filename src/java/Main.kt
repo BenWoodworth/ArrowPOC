@@ -14,10 +14,29 @@ object Main {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        GatewayServer(Main, 12345).start()
+        println("!!!Main")
+
+        val python = ProcessBuilder()
+            .command(
+                "python3",
+                "-m", javaClass.getResource("python").path
+            )
+            .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+            .redirectError(ProcessBuilder.Redirect.INHERIT)
+            .start()
+
+        val gatewayServer = GatewayServer(Main, 12345, 1000, 1000)
+        gatewayServer.start()
+        println("!!!Gateway opened")
+
+        python.destroy()
+        gatewayServer.shutdown()
+        println("!!!Done")
     }
 
     fun pythonEntry(pythonServiceFactory: PythonServiceFactory) {
+        println("!!!Python entry")
+
         val testFile = File("/tmp/ArrowPocTestFile")
         val testObjId = ByteArray(20)
 
@@ -53,4 +72,3 @@ object Main {
         }
     }
 }
-

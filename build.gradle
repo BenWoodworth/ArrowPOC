@@ -55,7 +55,7 @@ compileKotlin {
 }
 
 run {
-    mainClassName = "MainKt"
+    mainClassName = "Main"
     applicationDefaultJvmArgs [
             "-Djava.library.path=$rootDir/arrow/lib"
     ]
