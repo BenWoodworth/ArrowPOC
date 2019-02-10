@@ -1,8 +1,8 @@
 package test
 
-interface Serialize<T> {
+interface Serialize {
 
-    fun serialize(data: T): ByteArray
+    fun serialize(data: Any?): ByteArray
 
-    fun deserialize(data: ByteArray): T
+    fun deserialize(data: ByteArray): Any?
 }

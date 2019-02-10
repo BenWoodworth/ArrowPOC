@@ -1,8 +1,8 @@
 import test.ReadWrite
 import test.Serialize
 
-class PerformanceTester<TData>(
-    private val serializeServices: List<ServiceInfo<Serialize<TData>>>,
+class PerformanceTester(
+    private val serializeServices: List<ServiceInfo<Serialize>>,
     private val readWriteServices: List<ServiceInfo<ReadWrite>>
 ) {
 
@@ -28,7 +28,7 @@ class PerformanceTester<TData>(
         deserilizeDuration: Long
     )
 
-    fun test(data: TData): List<TestResult> {
+    fun test(data: Any?): List<TestResult> {
         val result = mutableListOf<TestResult>()
 
         for (serializer in serializeServices) {
@@ -56,11 +56,11 @@ class PerformanceTester<TData>(
     }
 
     private fun test(
-        data: TData,
-        serializer: ServiceInfo<Serialize<TData>>,
+        data: Any?,
+        serializer: ServiceInfo<Serialize>,
         writer: ServiceInfo<ReadWrite>,
         reader: ServiceInfo<ReadWrite>,
-        deserializer: ServiceInfo<Serialize<TData>>
+        deserializer: ServiceInfo<Serialize>
     ): TestResult {
         lateinit var serialized: ByteArray
         lateinit var read: ByteArray
