@@ -26,7 +26,7 @@ object Main {
             .redirectError(ProcessBuilder.Redirect.INHERIT)
             .start()
 
-        val gatewayServer = GatewayServer(Main, 12345)
+        val gatewayServer = GatewayServer(Main)
         gatewayServer.start()
         println("!!!Gateway opened")
 
