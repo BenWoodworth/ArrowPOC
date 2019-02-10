@@ -1,19 +1,21 @@
+from test.readwrite_file import ReadWriteFile
+from test.readwrite_plasma import ReadWritePlasma
+from test.serialize_parquet import SerializeParquet
+from test.serialize_json import SerializeJson
+
+
 class PythonServiceFactory:
     class Java:
         implements = ['ServiceFactory']
 
     def createReadWriteFile(self, file: str) -> ReadWriteFile:
-        # TODO
-        pass
+        return ReadWriteFile
 
     def createReadWritePlasma(self, storePath: str) -> ReadWritePlasma:
-        # TODO
-        pass
+        return ReadWritePlasma
 
     def createSerializeJson(self) -> SerializeJson:
-        # TODO
-        pass
+        return SerializeJson
 
     def createSerializeParquet(self) -> SerializeParquet:
-        # TODO
-        pass
+        return SerializeParquet
