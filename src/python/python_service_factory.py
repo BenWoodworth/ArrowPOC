@@ -9,13 +9,13 @@ class PythonServiceFactory:
         implements = ['ServiceFactory']
 
     def createReadWriteFile(self, file: str) -> ReadWriteFile:
-        return ReadWriteFile
+        return ReadWriteFile(path=file)
 
-    def createReadWritePlasma(self, storePath: str) -> ReadWritePlasma:
-        return ReadWritePlasma
+    def createReadWritePlasma(self, storePath: str, objectId: str) -> ReadWritePlasma:
+        return ReadWritePlasma(store_path=storePath, obj_id=objectId)
 
     def createSerializeJson(self) -> SerializeJson:
-        return SerializeJson
+        return SerializeJson()
 
     def createSerializeParquet(self) -> SerializeParquet:
-        return SerializeParquet
+        return SerializeParquet()
