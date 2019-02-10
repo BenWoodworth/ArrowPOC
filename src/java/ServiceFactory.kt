@@ -5,7 +5,7 @@ interface ServiceFactory {
 
     fun createReadWriteFile(file: String): ReadWrite
 
-    fun createReadWritePlasma(storePath: String): ReadWrite
+    fun createReadWritePlasma(storePath: String, objectId: ByteArray): ReadWrite
 
     fun createSerializeJson(): Serialize
 
