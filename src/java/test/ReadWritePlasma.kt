@@ -14,6 +14,10 @@ class ReadWritePlasma(
     }
 
     override fun write(data: ByteArray) {
+        if (client.contains(objectId)) {
+            client.release(objectId)
+        }
+
         client.put(objectId, data, null)
     }
 }
