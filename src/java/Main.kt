@@ -19,18 +19,19 @@ object Main {
         val python = ProcessBuilder()
             .command(
                 "python3",
-                "-m", javaClass.getResource("python").path
+                javaClass.getResource("python/__main__.py").path
             )
             .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+            .redirectInput(ProcessBuilder.Redirect.INHERIT)
             .redirectError(ProcessBuilder.Redirect.INHERIT)
             .start()
 
-        val gatewayServer = GatewayServer(Main, 12345, 1000, 1000)
+        val gatewayServer = GatewayServer(Main, 12345)
         gatewayServer.start()
         println("!!!Gateway opened")
 
-        python.destroy()
-        gatewayServer.shutdown()
+//        python.destroy()
+//        gatewayServer.shutdown()
         println("!!!Done")
     }
 

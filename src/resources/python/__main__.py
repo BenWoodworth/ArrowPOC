@@ -1,9 +1,9 @@
 from py4j.java_gateway import JavaGateway
+from python_service_factory import PythonServiceFactory
 
 if __name__ == '__main__':
-    println('hello world')
+    print('!!!Python __main__')
 
     gateway = JavaGateway(start_callback_server=True)
-
-    # "Sends" python object to the Java side.
-    numbers = operator_example.randomBinaryOperator(operator)
+    gateway.entry_point.pythonEntry(PythonServiceFactory())
+    # gateway.shutdown()
