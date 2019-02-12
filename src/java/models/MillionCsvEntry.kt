@@ -3,7 +3,7 @@ package models
 import kotlinx.serialization.Serializable
 
 @Serializable
-class DummyCsvEntry(
+class MillionCsvEntry(
     val first: String,
     val last: String,
     val email: String,

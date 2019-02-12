@@ -3,7 +3,7 @@ package models
 import kotlinx.serialization.Serializable
 
 @Serializable
-class DummyCsvEntryMillion(
+class HundredThousandCsvEntry(
     val age: Int,
     val dollar: String,
     val longitude: Double,

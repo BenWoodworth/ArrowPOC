@@ -1,6 +1,6 @@
 import models.CsvModel
-import models.DummyCsvEntry
-import models.DummyCsvEntryMillion
+import models.MillionCsvEntry
+import models.HundredThousandCsvEntry
 import java.io.File
 import java.text.SimpleDateFormat
 
@@ -12,14 +12,14 @@ object TestDataProvider {
 
         yield(
             TestData(
-                name = "hunThouModel.csv",
-                serializer = CsvModel.serializer(DummyCsvEntry.serializer()),
+                name = "million.csv",
+                serializer = CsvModel.serializer(MillionCsvEntry.serializer()),
 
                 data = CsvModel.fromFile(
-                    file = dataRes("hunThouModel.csv"),
+                    file = getDataResource("million.csv"),
                     hasHeader = true,
                     parseEntry = {
-                        DummyCsvEntry(
+                        MillionCsvEntry(
                             first = it[0],
                             last = it[1],
                             email = it[2],
@@ -34,14 +34,14 @@ object TestDataProvider {
 
         yield(
                 TestData(
-                        name = "millionModel.csv",
-                        serializer = CsvModel.serializer(DummyCsvEntryMillion.serializer()),
+                        name = "hundred-thousand.csv",
+                        serializer = CsvModel.serializer(HundredThousandCsvEntry.serializer()),
 
                         data = CsvModel.fromFile(
-                                file = dataRes("millionModel.csv"),
+                                file = getDataResource("hundred-thousand.csv"),
                                 hasHeader = true,
                                 parseEntry = {
-                                    DummyCsvEntryMillion(
+                                    HundredThousandCsvEntry(
                                             age = it[0].toInt(),
                                             dollar = it[1],
                                             longitude = it[2].toDouble(),
@@ -56,7 +56,7 @@ object TestDataProvider {
         )
     }
 
-    private fun dataRes(path: String): File {
+    private fun getDataResource(path: String): File {
         return File(Main::class.java.getResource("data/$path").file)
     }
 }
