@@ -1,7 +1,9 @@
 package models
 
+import kotlinx.serialization.Serializable
 import java.io.File
 
+@Serializable
 class CsvModel(
     val rows: List<List<String>>
 ) {

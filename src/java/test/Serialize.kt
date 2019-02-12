@@ -1,8 +1,10 @@
 package test
 
+import kotlinx.serialization.KSerializer
+
 interface Serialize {
 
-    fun serialize(data: Any?): ByteArray
+    fun <T> serialize(data: T, serializer: KSerializer<T>): ByteArray
 
-    fun deserialize(data: ByteArray): Any?
+    fun <T> deserialize(data: ByteArray, serializer: KSerializer<T>): T
 }

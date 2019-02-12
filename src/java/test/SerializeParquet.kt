@@ -1,12 +1,14 @@
 package test
 
+import kotlinx.serialization.KSerializer
+
 class SerializeParquet : Serialize {
 
-    override fun serialize(data: Any?): ByteArray {
+    override fun <T> serialize(data: T, serializer: KSerializer<T>): ByteArray {
         TODO("not implemented")
     }
 
-    override fun deserialize(data: ByteArray): Any? {
+    override fun <T> deserialize(data: ByteArray, serializer: KSerializer<T>): T {
         TODO("not implemented")
     }
 }

@@ -1,3 +1,4 @@
+import kotlinx.serialization.KSerializer
 import test.ReadWrite
 import test.Serialize
 
@@ -16,24 +17,25 @@ class PerformanceTester(
         val deserializeDuration: Long
     )
 
-    fun test(data: Any?): List<TestResult> {
+    fun <T> test(data: T, serializer: KSerializer<T>): List<TestResult> {
         val result = mutableListOf<TestResult>()
 
-        for (serializer in serializeServices) {
-            for (writer in readWriteServices) {
-                if (writer.platform != serializer.platform) continue
-                for (reader in readWriteServices) {
-                    if (reader.format != writer.format) continue
-                    for (deserializer in serializeServices) {
-                        if (deserializer.platform != reader.platform) continue
-                        if (deserializer.format != serializer.format) continue
+        for (serializeTester in serializeServices) {
+            for (writeTester in readWriteServices) {
+                if (writeTester.platform != serializeTester.platform) continue
+                for (readTester in readWriteServices) {
+                    if (readTester.format != writeTester.format) continue
+                    for (deserializeTester in serializeServices) {
+                        if (deserializeTester.platform != readTester.platform) continue
+                        if (deserializeTester.format != serializeTester.format) continue
 
                         result += test(
                             data,
                             serializer,
-                            writer,
-                            reader,
-                            deserializer
+                            serializeTester,
+                            writeTester,
+                            readTester,
+                            deserializeTester
                         )
                     }
                 }
@@ -43,25 +45,26 @@ class PerformanceTester(
         return result
     }
 
-    private fun test(
-        data: Any?,
-        serializer: ServiceInfo<Serialize>,
-        writer: ServiceInfo<ReadWrite>,
-        reader: ServiceInfo<ReadWrite>,
-        deserializer: ServiceInfo<Serialize>
+    private fun <T> test(
+        data: T,
+        serializer: KSerializer<T>,
+        serializeTester: ServiceInfo<Serialize>,
+        writeTester: ServiceInfo<ReadWrite>,
+        readTester: ServiceInfo<ReadWrite>,
+        deserializeTester: ServiceInfo<Serialize>
     ): TestResult {
         lateinit var serialized: ByteArray
         lateinit var read: ByteArray
 
         return TestResult(
-            fromPlatform = serializer.platform,
-            toPlatform = deserializer.platform,
-            serialFormat = serializer.format,
-            readWriteFormat = reader.format,
-            serializeDuration = time { serialized = serializer.service.serialize(data) },
-            writeDuration = time { writer.service.write(serialized) },
-            readDuration = time { read = reader.service.read() },
-            deserializeDuration = time { deserializer.service.deserialize(read) }
+            fromPlatform = serializeTester.platform,
+            toPlatform = deserializeTester.platform,
+            serialFormat = serializeTester.format,
+            readWriteFormat = readTester.format,
+            serializeDuration = time { serialized = serializeTester.service.serialize(data, serializer) },
+            writeDuration = time { writeTester.service.write(serialized) },
+            readDuration = time { read = readTester.service.read() },
+            deserializeDuration = time { deserializeTester.service.deserialize(read, serializer) }
         )
     }
 

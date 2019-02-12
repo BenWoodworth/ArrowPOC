@@ -1,7 +1,8 @@
 buildscript {
     ext {
         version_java = "1.8"
-        version_kotlin = "1.3.11"
+        version_kotlin = "1.3.21"
+        version_kotlinx_serialization = "0.10.0"
         version_arrow = "0.12.0"
         version_gson = "2.8.5"
         version_py4j = "0.10.8.1"
@@ -10,16 +11,19 @@ buildscript {
 
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$version_kotlin"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$version_kotlin"
     }
 }
 
 apply plugin: "java"
 apply plugin: "application"
 apply plugin: "kotlin"
+apply plugin: "kotlinx-serialization"
 
 group "koresigma"
 version "1.0-SNAPSHOT"
@@ -47,6 +51,7 @@ dependencies {
     compile files("arrow/bin/arrow-plasma-${version_arrow}.jar")
     
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version_kotlin"
+    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$version_kotlinx_serialization"
     compile "com.google.code.gson:gson:$version_gson"
     compile "net.sf.py4j:py4j:$version_py4j"
     compile "org.apache.parquet:parquet-format:$version_parquet"

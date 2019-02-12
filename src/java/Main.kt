@@ -8,8 +8,10 @@ private const val PLATFORM_PY = "python"
 private const val FORMAT_FILE = "file"
 private const val FORMAT_PLASMA = "plasma"
 private const val FORMAT_VARIABLE = "variable"
+private const val FORMAT_CBOR = "cbor"
 private const val FORMAT_JSON = "json"
 private const val FORMAT_PARQUET = "parquet"
+private const val FORMAT_PROTOBUF = "protobuf"
 
 object Main {
 
@@ -21,18 +23,20 @@ object Main {
         serializers: List<ServiceInfo<Serialize>>,
         readWriters: List<ServiceInfo<ReadWrite>>
     ) {
-        val dataFile = javaClass.getResource("data/dummyCSV.csv").file
-        val data = CsvModel.fromFile(File(dataFile))
+        val csvSerializer = CsvModel.serializer()
+
+        val dummyCsvDataFile = javaClass.getResource("data/dummyCSV.csv").file
+        val dummyCsvData = CsvModel.fromFile(File(dummyCsvDataFile))
 
         val tester = PerformanceTester(serializers, readWriters)
 
         println("Warming up...")
-        repeat(20) {
-            tester.test(data)
+        repeat(3) {
+            tester.test(dummyCsvData, csvSerializer)
         }
 
         println()
-        val results = tester.test(data)
+        val results = tester.test(dummyCsvData, csvSerializer)
         printResults(results)
     }
 
@@ -68,7 +72,9 @@ object Main {
 
     private fun getJvmSerializeServices(): List<ServiceInfo<Serialize>> {
         return listOf(
-            ServiceInfo(PLATFORM_JVM, FORMAT_JSON, SerializeJson())
+            ServiceInfo(PLATFORM_JVM, FORMAT_JSON, SerializeJson()),
+            ServiceInfo(PLATFORM_JVM, FORMAT_CBOR, SerializeCbor()),
+            ServiceInfo(PLATFORM_JVM, FORMAT_PROTOBUF, SerializeProtoBuf())
 //            ServiceInfo(PLATFORM_JVM, FORMAT_PARQUET, SerializeParquet())
         )
     }

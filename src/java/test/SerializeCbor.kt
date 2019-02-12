@@ -1,15 +1,15 @@
 package test
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.cbor.Cbor
 
-class SerializeJson : Serialize {
+class SerializeCbor : Serialize {
 
     override fun <T> serialize(data: T, serializer: KSerializer<T>): ByteArray {
-        return Json.stringify(serializer, data).toByteArray()
+        return Cbor.dump(serializer, data)
     }
 
     override fun <T> deserialize(data: ByteArray, serializer: KSerializer<T>): T {
-        return Json.parse(serializer, String(data))
+        return Cbor.load(serializer, data)
     }
 }
