@@ -1,3 +1,4 @@
+import models.CsvModel
 import test.*
 import java.io.File
 
@@ -14,6 +15,19 @@ object Main {
     private val testFile: File = File("/tmp/ArrowPocTestFile")
     private val plasmaStoreFile: File = File("/tmp/plasma")
     private val plasmaObject: ByteArray = ByteArray(20)
+
+    private fun test(
+        serializers: List<ServiceInfo<Serialize>>,
+        readWriters: List<ServiceInfo<ReadWrite>>
+    ) {
+        val dataFile = javaClass.getResource("data/dummyCSV.csv").file
+        val data = CsvModel.fromFile(File(dataFile))
+
+        val tester = PerformanceTester(serializers, readWriters)
+        val results = tester.test(data)
+
+        printResults(results)
+    }
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -37,7 +51,7 @@ object Main {
 ////        gatewayServer.shutdown()
 //        println("!!!Done")
 
-        PlasmaStore(plasmaStoreFile, 1000000).use { store ->
+        PlasmaStore(plasmaStoreFile, 1000000000).use { store ->
             test(
                 getJvmSerializeServices(),
                 getJvmReadWriteServices(testFile, store, plasmaObject)
@@ -62,7 +76,6 @@ object Main {
             ServiceInfo(PLATFORM_JVM, FORMAT_PLASMA, ReadWritePlasma(plasmaStore, plasmaObject))
         )
     }
-
 
     fun pythonEntry(pythonServiceFactory: PythonServiceFactory) {
         println("!!!Python entry")
@@ -91,13 +104,8 @@ object Main {
         }
     }
 
-    private fun test(
-        serializers: List<ServiceInfo<Serialize>>,
-        readWriters: List<ServiceInfo<ReadWrite>>
-    ) {
-        val tester = PerformanceTester(serializers, readWriters)
-        val results = tester.test("Hello, world!")
 
+    private fun printResults(results: List<PerformanceTester.TestResult>) {
         print("From Platform\t")
         print("To Platform\t")
         print("Serial Format\t")
