@@ -23,7 +23,7 @@ object Main {
         readWriters: List<ServiceInfo<ReadWrite>>
     ) {
         println("Loading dummyCSV.csv")
-        val dummyCsvDataFile = File(javaClass.getResource("data/dummyCSV.csv").file)
+        val dummyCsvDataFile = File(javaClass.getResource("data/millionModel.csv").file)
         val dummyCsvData = DummyCsvModel.fromFile(dummyCsvDataFile)
 
         val tester = PerformanceTester(serializers, readWriters)
