@@ -25,6 +25,10 @@ object Main {
 
         TestDataProvider.getTestData().forEach { testData ->
             println()
+
+            println("Warming up '${testData.name}'...")
+            tester.test(testData)
+
             println("Testing '${testData.name}'...")
 
             val results = tester.test(testData)
