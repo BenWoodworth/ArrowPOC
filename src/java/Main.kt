@@ -22,20 +22,17 @@ object Main {
         serializers: List<ServiceInfo<Serialize>>,
         readWriters: List<ServiceInfo<ReadWrite>>
     ) {
-        println("Loading dummyCSV.csv")
-        val dummyCsvDataFile = File(javaClass.getResource("data/millionModel.csv").file)
-        val dummyCsvData = DummyCsvModel.fromFile(dummyCsvDataFile)
-
         val tester = PerformanceTester(serializers, readWriters)
 
-        println("Warming up...")
-        repeat(2) {
-            tester.test(dummyCsvData, DummyCsvModel.serializer())
+        TestDataProvider.getTestData().forEach { testData ->
+            println()
+            println("Testing '${testData.name}'...")
+
+            val results = tester.test(testData)
+            printResults(results)
         }
 
-        println()
-        val results = tester.test(dummyCsvData, DummyCsvModel.serializer())
-        printResults(results)
+
     }
 
     @JvmStatic

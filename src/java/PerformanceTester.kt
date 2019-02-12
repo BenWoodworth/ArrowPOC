@@ -18,7 +18,7 @@ class PerformanceTester(
         val serializedSize: Int
     )
 
-    fun <T> test(data: T, serializer: KSerializer<T>): List<TestResult> {
+    fun <T> test(testData: TestData<T>): List<TestResult> {
         val result = mutableListOf<TestResult>()
 
         for (serializeTester in serializeServices) {
@@ -31,8 +31,8 @@ class PerformanceTester(
                         if (deserializeTester.format != serializeTester.format) continue
 
                         result += test(
-                            data,
-                            serializer,
+                            testData.data,
+                            testData.serializer,
                             serializeTester,
                             writeTester,
                             readTester,
