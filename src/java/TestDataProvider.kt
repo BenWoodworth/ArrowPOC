@@ -12,11 +12,11 @@ object TestDataProvider {
 
         yield(
             TestData(
-                name = "hundred-thousand-actual.csv",
+                name = "hundred-thousand.csv",
                 serializer = CsvModel.serializer(MillionCsvEntry.serializer()),
 
                 data = CsvModel.fromFile(
-                    file = getDataResource("hundred-thousand-actual.csv"),
+                    file = getDataResource("hundred-thousand.csv"),
                     hasHeader = true,
                     parseEntry = {
                         MillionCsvEntry(
@@ -34,11 +34,11 @@ object TestDataProvider {
 
         yield(
                 TestData(
-                        name = "million-actual.csv",
+                        name = "million.csv",
                         serializer = CsvModel.serializer(HundredThousandCsvEntry.serializer()),
 
                         data = CsvModel.fromFile(
-                                file = getDataResource("million-actual.csv"),
+                                file = getDataResource("million.csv"),
                                 hasHeader = true,
                                 parseEntry = {
                                     HundredThousandCsvEntry(
