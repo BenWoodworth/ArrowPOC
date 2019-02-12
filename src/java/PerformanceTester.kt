@@ -18,32 +18,32 @@ class PerformanceTester(
         val serializedSize: Int
     )
 
-    fun <T> test(testData: TestData<T>): List<TestResult> {
-        val result = mutableListOf<TestResult>()
+    fun <T> test(testData: TestData<T>): Sequence<TestResult> {
+        return sequence {
+            for (serializeTester in serializeServices) {
+                for (writeTester in readWriteServices) {
+                    if (writeTester.platform != serializeTester.platform) continue
+                    for (readTester in readWriteServices) {
+                        if (readTester.format != writeTester.format) continue
+                        for (deserializeTester in serializeServices) {
+                            if (deserializeTester.platform != readTester.platform) continue
+                            if (deserializeTester.format != serializeTester.format) continue
 
-        for (serializeTester in serializeServices) {
-            for (writeTester in readWriteServices) {
-                if (writeTester.platform != serializeTester.platform) continue
-                for (readTester in readWriteServices) {
-                    if (readTester.format != writeTester.format) continue
-                    for (deserializeTester in serializeServices) {
-                        if (deserializeTester.platform != readTester.platform) continue
-                        if (deserializeTester.format != serializeTester.format) continue
-
-                        result += test(
-                            testData.data,
-                            testData.serializer,
-                            serializeTester,
-                            writeTester,
-                            readTester,
-                            deserializeTester
-                        )
+                            yield(
+                                test(
+                                    testData.data,
+                                    testData.serializer,
+                                    serializeTester,
+                                    writeTester,
+                                    readTester,
+                                    deserializeTester
+                                )
+                            )
+                        }
                     }
                 }
             }
         }
-
-        return result
     }
 
     private fun <T> test(

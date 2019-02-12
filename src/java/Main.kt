@@ -35,7 +35,8 @@ object Main {
             printResults(results)
         }
 
-
+        println()
+        println("Done!")
     }
 
     @JvmStatic
@@ -117,7 +118,7 @@ object Main {
     }
 
 
-    private fun printResults(results: List<PerformanceTester.TestResult>) {
+    private fun printResults(results: Sequence<PerformanceTester.TestResult>) {
         print("From Platform,")
         print("To Platform,")
         print("Serial Format,")
