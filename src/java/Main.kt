@@ -118,14 +118,15 @@ object Main {
 
 
     private fun printResults(results: List<PerformanceTester.TestResult>) {
-        print("From,")
-        print("To,")
-        print("Serial,")
-        print("ReadWrite,")
-        print("Serialize (ns),")
-        print("Write (ns),")
-        print("Read (ns),")
-        print("Deserialize (ns)\n")
+        print("Platform: From,")
+        print("Platform: To,")
+        print("Format: Serial,")
+        print("Format: ReadWrite,")
+        print("Time: Serialize (ns),")
+        print("Time: Write (ns),")
+        print("Time: Read (ns),")
+        print("Time: Deserialize (ns),")
+        print("Size: Serialized Data (b)\n")
 
         results.forEach { result ->
             print("${result.fromPlatform},")
@@ -135,7 +136,8 @@ object Main {
             print("${result.serializeDuration},")
             print("${result.writeDuration},")
             print("${result.readDuration},")
-            print("${result.deserializeDuration}\n")
+            print("${result.deserializeDuration},")
+            print("${result.serializedSize}\n")
         }
     }
 }

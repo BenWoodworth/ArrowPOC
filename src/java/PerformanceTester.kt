@@ -14,7 +14,8 @@ class PerformanceTester(
         val serializeDuration: Long,
         val writeDuration: Long,
         val readDuration: Long,
-        val deserializeDuration: Long
+        val deserializeDuration: Long,
+        val serializedSize: Int
     )
 
     fun <T> test(data: T, serializer: KSerializer<T>): List<TestResult> {
@@ -64,7 +65,8 @@ class PerformanceTester(
             serializeDuration = time { serialized = serializeTester.service.serialize(data, serializer) },
             writeDuration = time { writeTester.service.write(serialized) },
             readDuration = time { read = readTester.service.read() },
-            deserializeDuration = time { deserializeTester.service.deserialize(read, serializer) }
+            deserializeDuration = time { deserializeTester.service.deserialize(read, serializer) },
+            serializedSize = serialized.size
         )
     }
 
