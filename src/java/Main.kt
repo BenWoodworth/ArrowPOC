@@ -27,7 +27,7 @@ object Main {
             println()
 
             println("Warming up '${testData.name}'...")
-            tester.test(testData)
+            tester.test(testData).forEach { }
 
             println("Testing '${testData.name}'...")
 
@@ -85,8 +85,8 @@ object Main {
     ): List<ServiceInfo<ReadWrite>> {
         return listOf(
             ServiceInfo(PLATFORM_JVM, FORMAT_FILE, ReadWriteFile(testFile)),
-            ServiceInfo(PLATFORM_JVM, FORMAT_PLASMA, ReadWritePlasma(plasmaStore, plasmaObject)),
-            ServiceInfo(PLATFORM_JVM, FORMAT_VARIABLE, ReadWriteVariable())
+            ServiceInfo(PLATFORM_JVM, FORMAT_PLASMA, ReadWritePlasma(plasmaStore, plasmaObject))
+//            ServiceInfo(PLATFORM_JVM, FORMAT_VARIABLE, ReadWriteVariable())
         )
     }
 
