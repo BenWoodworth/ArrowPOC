@@ -5,11 +5,13 @@ import kotlinx.serialization.cbor.Cbor
 
 class SerializeCbor : Serialize {
 
+    private val cbor = Cbor()
+
     override fun <T> serialize(data: T, serializer: KSerializer<T>): ByteArray {
-        return Cbor.dump(serializer, data)
+        return cbor.dump(serializer, data)
     }
 
     override fun <T> deserialize(data: ByteArray, serializer: KSerializer<T>): T {
-        return Cbor.load(serializer, data)
+        return cbor.load(serializer, data)
     }
 }

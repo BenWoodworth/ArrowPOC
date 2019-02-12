@@ -1,8 +1,6 @@
-import models.CsvModel
+import models.DummyCsvModel
 import test.*
 import java.io.File
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 
 private const val PLATFORM_JVM = "jvm"
 private const val PLATFORM_PY = "python"
@@ -16,7 +14,6 @@ private const val FORMAT_PARQUET = "parquet"
 private const val FORMAT_PROTOBUF = "protobuf"
 
 object Main {
-
     private val testFile: File = File("/tmp/ArrowPocTestFile")
     private val plasmaStoreFile: File = File("/tmp/plasma")
     private val plasmaObject: ByteArray = ByteArray(20)
@@ -25,33 +22,19 @@ object Main {
         serializers: List<ServiceInfo<Serialize>>,
         readWriters: List<ServiceInfo<ReadWrite>>
     ) {
-        val csvSerializer = CsvModel.serializer()
-
-        val dummyCsvDataFile = javaClass.getResource("data/dummyCSV.csv").file
-
-        val dateFormat = SimpleDateFormat("m/d/yyyy")
-        val dummyCsvData = CsvModel.fromFile(
-            file = File(dummyCsvDataFile),
-            hasHeader = true,
-            columns = listOf(
-                CsvModel.Column("first") { it },
-                CsvModel.Column("last") { it },
-                CsvModel.Column("email") { it },
-                CsvModel.Column("age") { it.toInt() },
-                CsvModel.Column("birthday") { dateFormat.parse(it).time },
-                CsvModel.Column("ccnumber") { it.toLong() }
-            )
-        )
+        println("Loading dummyCSV.csv")
+        val dummyCsvDataFile = File(javaClass.getResource("data/dummyCSV.csv").file)
+        val dummyCsvData = DummyCsvModel.fromFile(dummyCsvDataFile)
 
         val tester = PerformanceTester(serializers, readWriters)
 
         println("Warming up...")
         repeat(2) {
-            tester.test(dummyCsvData, csvSerializer)
+            tester.test(dummyCsvData, DummyCsvModel.serializer())
         }
 
         println()
-        val results = tester.test(dummyCsvData, csvSerializer)
+        val results = tester.test(dummyCsvData, DummyCsvModel.serializer())
         printResults(results)
     }
 

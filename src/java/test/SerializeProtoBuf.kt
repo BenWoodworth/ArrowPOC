@@ -5,11 +5,13 @@ import kotlinx.serialization.protobuf.ProtoBuf
 
 class SerializeProtoBuf : Serialize {
 
+    private val protoBuf = ProtoBuf()
+
     override fun <T> serialize(data: T, serializer: KSerializer<T>): ByteArray {
-        return ProtoBuf.dump(serializer, data)
+        return protoBuf.dump(serializer, data)
     }
 
     override fun <T> deserialize(data: ByteArray, serializer: KSerializer<T>): T {
-        return ProtoBuf.load(serializer, data)
+        return protoBuf.load(serializer, data)
     }
 }
