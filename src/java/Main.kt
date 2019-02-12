@@ -7,6 +7,7 @@ private const val PLATFORM_PY = "python"
 
 private const val FORMAT_FILE = "file"
 private const val FORMAT_PLASMA = "plasma"
+private const val FORMAT_VARIABLE = "variable"
 private const val FORMAT_JSON = "json"
 private const val FORMAT_PARQUET = "parquet"
 
@@ -24,8 +25,14 @@ object Main {
         val data = CsvModel.fromFile(File(dataFile))
 
         val tester = PerformanceTester(serializers, readWriters)
-        val results = tester.test(data)
 
+        println("Warming up...")
+        repeat(20) {
+            tester.test(data)
+        }
+
+        println()
+        val results = tester.test(data)
         printResults(results)
     }
 
@@ -73,7 +80,8 @@ object Main {
     ): List<ServiceInfo<ReadWrite>> {
         return listOf(
             ServiceInfo(PLATFORM_JVM, FORMAT_FILE, ReadWriteFile(testFile)),
-            ServiceInfo(PLATFORM_JVM, FORMAT_PLASMA, ReadWritePlasma(plasmaStore, plasmaObject))
+            ServiceInfo(PLATFORM_JVM, FORMAT_PLASMA, ReadWritePlasma(plasmaStore, plasmaObject)),
+            ServiceInfo(PLATFORM_JVM, FORMAT_VARIABLE, ReadWriteVariable())
         )
     }
 
