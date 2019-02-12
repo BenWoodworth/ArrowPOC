@@ -106,23 +106,23 @@ object Main {
 
 
     private fun printResults(results: List<PerformanceTester.TestResult>) {
-        print("From Platform\t")
-        print("To Platform\t")
-        print("Serial Format\t")
-        print("ReadWrite Format\t")
-        print("Serialize Duration\t")
-        print("Write Duration\t")
-        print("Read Duration\t")
-        print("Deserialize Duration\n")
+        print("From,")
+        print("To,")
+        print("Serial,")
+        print("ReadWrite,")
+        print("Serialize (ns),")
+        print("Write (ns),")
+        print("Read (ns),")
+        print("Deserialize (ns)\n")
 
         results.forEach { result ->
-            print("${result.fromPlatform}\t")
-            print("${result.toPlatform}\t")
-            print("${result.serialFormat}\t")
-            print("${result.readWriteFormat}\t")
-            print("${result.serializeDuration}\t")
-            print("${result.writeDuration}\t")
-            print("${result.readDuration}\t")
+            print("${result.fromPlatform},")
+            print("${result.toPlatform},")
+            print("${result.serialFormat},")
+            print("${result.readWriteFormat},")
+            print("${result.serializeDuration},")
+            print("${result.writeDuration},")
+            print("${result.readDuration},")
             print("${result.deserializeDuration}\n")
         }
     }
