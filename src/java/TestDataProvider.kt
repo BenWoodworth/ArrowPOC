@@ -1,5 +1,6 @@
 import models.CsvModel
 import models.DummyCsvEntry
+import models.DummyCsvEntryMillion
 import java.io.File
 import java.text.SimpleDateFormat
 
@@ -29,6 +30,29 @@ object TestDataProvider {
                     }
                 )
             )
+        )
+
+        yield(
+                TestData(
+                        name = "millionModel.csv",
+                        serializer = CsvModel.serializer(DummyCsvEntryMillion.serializer()),
+
+                        data = CsvModel.fromFile(
+                                file = dataRes("millionModel.csv"),
+                                hasHeader = true,
+                                parseEntry = {
+                                    DummyCsvEntryMillion(
+                                            age = it[0].toInt(),
+                                            dollar = it[1],
+                                            longitude = it[2].toDouble(),
+                                            latitude = it[3].toDouble(),
+                                            zip = it[4].toInt(),
+                                            integer = it[5].toInt(),
+                                            ccnumber = it[6].toLong()
+                                    )
+                                }
+                        )
+                )
         )
     }
 
