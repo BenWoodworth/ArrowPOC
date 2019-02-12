@@ -1,6 +1,8 @@
 import models.CsvModel
 import test.*
 import java.io.File
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 private const val PLATFORM_JVM = "jvm"
 private const val PLATFORM_PY = "python"
@@ -26,12 +28,25 @@ object Main {
         val csvSerializer = CsvModel.serializer()
 
         val dummyCsvDataFile = javaClass.getResource("data/dummyCSV.csv").file
-        val dummyCsvData = CsvModel.fromFile(File(dummyCsvDataFile))
+
+        val dateFormat = SimpleDateFormat("m/d/yyyy")
+        val dummyCsvData = CsvModel.fromFile(
+            file = File(dummyCsvDataFile),
+            hasHeader = true,
+            columns = listOf(
+                CsvModel.Column("first") { it },
+                CsvModel.Column("last") { it },
+                CsvModel.Column("email") { it },
+                CsvModel.Column("age") { it.toInt() },
+                CsvModel.Column("birthday") { dateFormat.parse(it).time },
+                CsvModel.Column("ccnumber") { it.toLong() }
+            )
+        )
 
         val tester = PerformanceTester(serializers, readWriters)
 
         println("Warming up...")
-        repeat(3) {
+        repeat(2) {
             tester.test(dummyCsvData, csvSerializer)
         }
 
