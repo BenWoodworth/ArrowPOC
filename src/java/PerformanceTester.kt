@@ -1,3 +1,4 @@
+import data.TestData
 import kotlinx.serialization.KSerializer
 import test.ReadWrite
 import test.Serialize
@@ -7,17 +8,12 @@ class PerformanceTester(
     private val readWriteServices: List<ReadWrite>
 ) {
     fun <T> test(testData: TestData<T>): Sequence<TestResult> {
+        val data = testData.getData()
+
         return sequence {
             for (serializeTester in serializeServices) {
                 for (writeTester in readWriteServices) {
-                    yield(
-                        test(
-                            testData.data,
-                            testData.serializer,
-                            serializeTester,
-                            writeTester
-                        )
-                    )
+                    yield(test(data, testData.serializer, serializeTester, writeTester))
                 }
             }
         }

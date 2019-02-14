@@ -1,3 +1,6 @@
+import data.TestData
+import data.TestDataMillion
+import data.TestDataHundredThousand
 import test.*
 import java.io.File
 
@@ -10,13 +13,17 @@ object Main {
     fun main(vararg args: String) {
         PlasmaStore(plasmaStoreFile, 1000000000).use { store ->
             test(
-                listOf(
+                testData = listOf(
+                    TestDataHundredThousand,
+                    TestDataMillion
+                ),
+                serializeServices = listOf(
                     SerializeJson(),
-                    SerializeCbor(),
-                    SerializeProtoBuf()
+                    SerializeCbor()
+//                    SerializeProtoBuf()
 //                   SerializeParquet()
                 ),
-                listOf(
+                readWriteServices = listOf(
                     ReadWriteFile(testFile),
                     ReadWritePlasma(store, plasmaObject)
 //                   ReadWriteVariable()
@@ -26,20 +33,21 @@ object Main {
     }
 
     private fun test(
-        serializers: List<Serialize>,
-        readWriters: List<ReadWrite>
+        testData: List<TestData<*>>,
+        serializeServices: List<Serialize>,
+        readWriteServices: List<ReadWrite>
     ) {
-        val tester = PerformanceTester(serializers, readWriters)
+        val tester = PerformanceTester(serializeServices, readWriteServices)
 
-        TestDataProvider.getTestData().forEach { testData ->
+        testData.forEach { data ->
             println()
 
-            println("Warming up '${testData.name}'...")
-            tester.test(testData).forEach { }
+            println("Warming up '${data.name}'...")
+            tester.test(data).forEach { }
 
-            println("Testing '${testData.name}'...")
+            println("Testing '${data.name}'...")
 
-            val results = tester.test(testData)
+            val results = tester.test(data)
             printResults(results)
         }
 

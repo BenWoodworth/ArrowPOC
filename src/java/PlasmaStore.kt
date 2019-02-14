@@ -2,7 +2,7 @@ import org.apache.arrow.plasma.PlasmaClient
 import java.io.File
 
 class PlasmaStore(
-    val location: File,
+    private val location: File,
     bytes: Int
 ) : AutoCloseable {
 
