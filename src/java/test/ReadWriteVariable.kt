@@ -2,6 +2,8 @@ package test
 
 class ReadWriteVariable: ReadWrite {
 
+    override val format: String = "variable"
+
     private lateinit var value: ByteArray
 
     override fun read(): ByteArray {

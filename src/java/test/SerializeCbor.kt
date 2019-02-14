@@ -5,6 +5,8 @@ import kotlinx.serialization.cbor.Cbor
 
 class SerializeCbor : Serialize {
 
+    override val format: String = "cbor"
+
     private val cbor = Cbor()
 
     override fun <T> serialize(data: T, serializer: KSerializer<T>): ByteArray {

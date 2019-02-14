@@ -7,6 +7,8 @@ class ReadWritePlasma(
     private val objectId: ByteArray
 ): ReadWrite {
 
+    override val format: String = "plasma"
+
     private val client = store.createClient()
 
     override fun read(): ByteArray {

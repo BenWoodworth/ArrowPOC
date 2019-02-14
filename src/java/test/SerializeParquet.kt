@@ -4,6 +4,8 @@ import kotlinx.serialization.KSerializer
 
 class SerializeParquet : Serialize {
 
+    override val format: String = "parquet"
+
     override fun <T> serialize(data: T, serializer: KSerializer<T>): ByteArray {
         TODO("not implemented")
     }

@@ -5,6 +5,8 @@ import kotlinx.serialization.json.Json
 
 class SerializeJson : Serialize {
 
+    override val format: String = "json"
+
     override fun <T> serialize(data: T, serializer: KSerializer<T>): ByteArray {
         return Json.stringify(serializer, data).toByteArray()
     }

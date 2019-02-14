@@ -3,12 +3,10 @@ import test.ReadWrite
 import test.Serialize
 
 class PerformanceTester(
-    private val serializeServices: List<ServiceInfo<Serialize>>,
-    private val readWriteServices: List<ServiceInfo<ReadWrite>>
+    private val serializeServices: List<Serialize>,
+    private val readWriteServices: List<ReadWrite>
 ) {
     data class TestResult(
-        val fromPlatform: String,
-        val toPlatform: String,
         val serialFormat: String,
         val readWriteFormat: String,
         val serializeDuration: Long,
@@ -22,25 +20,16 @@ class PerformanceTester(
         return sequence {
             for (serializeTester in serializeServices) {
                 for (writeTester in readWriteServices) {
-                    if (writeTester.platform != serializeTester.platform) continue
-                    for (readTester in readWriteServices) {
-                        if (readTester.format != writeTester.format) continue
-                        for (deserializeTester in serializeServices) {
-                            if (deserializeTester.platform != readTester.platform) continue
-                            if (deserializeTester.format != serializeTester.format) continue
+
 
                             yield(
                                 test(
                                     testData.data,
                                     testData.serializer,
                                     serializeTester,
-                                    writeTester,
-                                    readTester,
-                                    deserializeTester
+                                    writeTester
                                 )
                             )
-                        }
-                    }
                 }
             }
         }
@@ -49,23 +38,19 @@ class PerformanceTester(
     private fun <T> test(
         data: T,
         serializer: KSerializer<T>,
-        serializeTester: ServiceInfo<Serialize>,
-        writeTester: ServiceInfo<ReadWrite>,
-        readTester: ServiceInfo<ReadWrite>,
-        deserializeTester: ServiceInfo<Serialize>
+        serializeService: Serialize,
+        readWriteService: ReadWrite
     ): TestResult {
         lateinit var serialized: ByteArray
         lateinit var read: ByteArray
 
         return TestResult(
-            fromPlatform = serializeTester.platform,
-            toPlatform = deserializeTester.platform,
-            serialFormat = serializeTester.format,
-            readWriteFormat = readTester.format,
-            serializeDuration = time { serialized = serializeTester.service.serialize(data, serializer) },
-            writeDuration = time { writeTester.service.write(serialized) },
-            readDuration = time { read = readTester.service.read() },
-            deserializeDuration = time { deserializeTester.service.deserialize(read, serializer) },
+            serialFormat = serializeService.format,
+            readWriteFormat = readWriteService.format,
+            serializeDuration = time { serialized = serializeService.serialize(data, serializer) },
+            writeDuration = time { readWriteService.write(serialized) },
+            readDuration = time { read = readWriteService.read() },
+            deserializeDuration = time { serializeService.deserialize(read, serializer) },
             serializedSize = serialized.size
         )
     }

@@ -5,6 +5,8 @@ import kotlinx.serialization.protobuf.ProtoBuf
 
 class SerializeProtoBuf : Serialize {
 
+    override val format: String = "protobuf"
+
     private val protoBuf = ProtoBuf()
 
     override fun <T> serialize(data: T, serializer: KSerializer<T>): ByteArray {
