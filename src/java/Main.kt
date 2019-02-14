@@ -10,8 +10,17 @@ object Main {
     fun main(vararg args: String) {
         PlasmaStore(plasmaStoreFile, 1000000000).use { store ->
             test(
-                getSerializeServices(),
-                getReadWriteServices(testFile, store, plasmaObject)
+                listOf(
+                    SerializeJson(),
+                    SerializeCbor(),
+                    SerializeProtoBuf()
+//                   SerializeParquet()
+                ),
+                listOf(
+                    ReadWriteFile(testFile),
+                    ReadWritePlasma(store, plasmaObject)
+//                   ReadWriteVariable()
+                )
             )
         }
     }
@@ -38,28 +47,7 @@ object Main {
         println("Done!")
     }
 
-    private fun getSerializeServices(): List<Serialize> {
-        return listOf(
-            SerializeJson(),
-            SerializeCbor(),
-            SerializeProtoBuf()
-//            SerializeParquet()
-        )
-    }
-
-    private fun getReadWriteServices(
-        testFile: File,
-        plasmaStore: PlasmaStore,
-        plasmaObject: ByteArray
-    ): List<ReadWrite> {
-        return listOf(
-            ReadWriteFile(testFile),
-            ReadWritePlasma(plasmaStore, plasmaObject)
-//            ReadWriteVariable()
-        )
-    }
-
-    private fun printResults(results: Sequence<PerformanceTester.TestResult>) {
+    private fun printResults(results: Sequence<TestResult>) {
         print("Serial Format,")
         print("ReadWrite Format,")
         print("Serialize Time (ns),")

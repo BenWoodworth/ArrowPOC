@@ -6,30 +6,18 @@ class PerformanceTester(
     private val serializeServices: List<Serialize>,
     private val readWriteServices: List<ReadWrite>
 ) {
-    data class TestResult(
-        val serialFormat: String,
-        val readWriteFormat: String,
-        val serializeDuration: Long,
-        val writeDuration: Long,
-        val readDuration: Long,
-        val deserializeDuration: Long,
-        val serializedSize: Int
-    )
-
     fun <T> test(testData: TestData<T>): Sequence<TestResult> {
         return sequence {
             for (serializeTester in serializeServices) {
                 for (writeTester in readWriteServices) {
-
-
-                            yield(
-                                test(
-                                    testData.data,
-                                    testData.serializer,
-                                    serializeTester,
-                                    writeTester
-                                )
-                            )
+                    yield(
+                        test(
+                            testData.data,
+                            testData.serializer,
+                            serializeTester,
+                            writeTester
+                        )
+                    )
                 }
             }
         }
