@@ -55,6 +55,7 @@ dependencies {
     compile "com.google.code.gson:gson:$version_gson"
     compile "net.sf.py4j:py4j:$version_py4j"
     compile "org.apache.parquet:parquet-format:$version_parquet"
+    compile "org.apache.arrow:arrow-vector:$version_arrow"
 }
 
 compileKotlin {
