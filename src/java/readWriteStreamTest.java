@@ -24,9 +24,8 @@ public class readWriteStreamTest {
         return new Schema(asList(newField));
     }
 
-    private static ByteArrayOutputStream writeStream() throws IOException {
+    private static ByteArrayOutputStream writeStream(Schema schema) throws IOException {
         int numBatches = 1;
-        Schema schema = getTestSchema();
 
         try (VectorSchemaRoot root = VectorSchemaRoot.create(schema, allocator)) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -41,8 +40,8 @@ public class readWriteStreamTest {
         }
     }
 
-    private static ByteArrayInputStream readStream(ByteArrayOutputStream out) throws IOException {
-        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+    private static ByteArrayInputStream readStream(byte[] out) throws IOException {
+        ByteArrayInputStream in = new ByteArrayInputStream(out);
         try (ArrowStreamReader reader = new ArrowStreamReader(in, allocator)) {
             Schema readSchema = reader.getVectorSchemaRoot().getSchema();
             System.out.println(readSchema.toJson());
@@ -52,8 +51,20 @@ public class readWriteStreamTest {
     }
 
     public static void main(String[] args) throws IOException {
-        ByteArrayOutputStream out = writeStream();
-        readStream(out);
+        // get csv test data
+        // create schema for it
+
+        Schema schema = getTestSchema(); // comment this out once we figure out how to create schema for test data
+
+        // pass scheme to writeStream() method
+        ByteArrayOutputStream out = writeStream(schema);
+
+        // pass out into plasma; store it's object id
+        // get it from plasma using object id
+        // pass it to read stream
+
+        readStream(out.toByteArray());
+
         //TestDataMillion.INSTANCE.getData().);
     }
 }
