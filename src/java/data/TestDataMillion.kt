@@ -22,7 +22,7 @@ object TestDataMillion : TestDataCsv<TestDataMillion.Entry>() {
     }
 
     @Serializable
-    class Entry(
+    data class Entry(
         val age: Int,
         val dollar: String,
         val longitude: Double,
