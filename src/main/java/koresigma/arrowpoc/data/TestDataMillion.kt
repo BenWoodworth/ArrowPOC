@@ -1,4 +1,4 @@
-package data
+package koresigma.arrowpoc.data
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.list
@@ -6,7 +6,7 @@ import kotlinx.serialization.list
 object TestDataMillion : TestDataCsv<TestDataMillion.Entry>() {
 
     override val name = "million"
-    override val file = resource("data/million.csv")
+    override val file = resource("/data/million.csv")
     override val serializer = Entry.serializer().list
 
     override fun parseEntry(row: List<String>): Entry {

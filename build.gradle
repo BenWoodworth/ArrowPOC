@@ -31,19 +31,12 @@ version "1.0-SNAPSHOT"
 sourceCompatibility = version_java
 targetCompatibility = version_java
 
-mainClassName = "Main"
+mainClassName = "koresigma.arrowpoc.Main"
 
 repositories {
     mavenCentral()
     maven { url "https://kotlin.bintray.com/kotlinx" }
     jcenter()
-}
-
-sourceSets {
-    main {
-        java.srcDirs = ['src/java']
-        resources.srcDirs = ['src/resources']
-    }
 }
 
 dependencies {

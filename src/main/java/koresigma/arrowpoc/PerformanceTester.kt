@@ -1,7 +1,7 @@
-import data.TestData
+import koresigma.arrowpoc.data.TestData
 import kotlinx.serialization.KSerializer
-import test.ReadWrite
-import test.Serialize
+import koresigma.arrowpoc.test.ReadWrite
+import koresigma.arrowpoc.test.Serialize
 
 class PerformanceTester(
     private val serializeServices: List<Serialize>,

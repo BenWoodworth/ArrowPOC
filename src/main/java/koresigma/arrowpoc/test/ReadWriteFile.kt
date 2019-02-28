@@ -1,4 +1,4 @@
-package test
+package koresigma.arrowpoc.test
 
 import java.io.File
 

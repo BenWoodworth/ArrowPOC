@@ -1,4 +1,4 @@
-package test
+package koresigma.arrowpoc.test
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.protobuf.ProtoBuf
