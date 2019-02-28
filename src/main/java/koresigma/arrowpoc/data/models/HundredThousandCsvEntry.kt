@@ -1,4 +1,4 @@
-package models
+package koresigma.arrowpoc.data.models
 
 import kotlinx.serialization.Serializable
 

@@ -39,13 +39,6 @@ repositories {
     jcenter()
 }
 
-sourceSets {
-    main {
-        java.srcDirs = ['src/java']
-        resources.srcDirs = ['src/resources']
-    }
-}
-
 dependencies {
 //    compile "org.apache.arrow:arrow-plasma:$version_arrow"
     compile files("arrow/bin/arrow-plasma-${version_arrow}.jar")

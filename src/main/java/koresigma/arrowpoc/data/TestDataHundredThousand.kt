@@ -1,4 +1,4 @@
-package data
+package koresigma.arrowpoc.data
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.list

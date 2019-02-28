@@ -1,4 +1,4 @@
-import data.TestData
+import koresigma.arrowpoc.data.TestData
 import kotlinx.serialization.KSerializer
 import test.ReadWrite
 import test.Serialize

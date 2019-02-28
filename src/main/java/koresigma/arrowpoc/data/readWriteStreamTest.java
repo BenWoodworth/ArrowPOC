@@ -1,4 +1,5 @@
-import data.TestDataMillion;
+package koresigma.arrowpoc.data;
+
 import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;
 import org.apache.arrow.vector.VectorSchemaRoot;

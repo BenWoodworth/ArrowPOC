@@ -1,9 +1,7 @@
-package models
+package koresigma.arrowpoc.data.models
 
 import kotlinx.serialization.Serializable
 import java.io.File
-import java.text.SimpleDateFormat
-import kotlin.random.Random
 
 @Serializable
 class CsvModel<T>(val entries: List<T>) {
