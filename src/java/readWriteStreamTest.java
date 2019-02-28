@@ -1,6 +1,7 @@
 import data.TestDataMillion;
 import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;
+import org.apache.arrow.plasma.PlasmaClient;
 import org.apache.arrow.vector.VectorSchemaRoot;
 import org.apache.arrow.vector.ipc.ArrowStreamReader;
 import org.apache.arrow.vector.ipc.ArrowStreamWriter;
@@ -37,6 +38,7 @@ public class readWriteStreamTest {
         return new Schema(allFields);
     }
 
+
     private static ByteArrayOutputStream writeStream(Schema schema) throws IOException {
         int numBatches = 1;
 
@@ -57,26 +59,40 @@ public class readWriteStreamTest {
         ByteArrayInputStream in = new ByteArrayInputStream(out);
         try (ArrowStreamReader reader = new ArrowStreamReader(in, allocator)) {
             Schema readSchema = reader.getVectorSchemaRoot().getSchema();
-            System.out.println(readSchema.toJson());
+            while (reader.loadNextBatch()){
+                System.out.println(reader.getVectorSchemaRoot().getRowCount());
+                reader.loadNextBatch();
+            }
         }
 
         return in;
     }
 
+    private static byte[] putValueInPlasma(PlasmaClient plasmaClient, byte[] value){
+        byte[] objectId = new byte[20];
+        new Random().nextBytes(objectId);
+        byte[] metaData = null;
+        plasmaClient.put(objectId, value, metaData);
+
+        return objectId;
+    }
+
+    private static byte[] getValueFromPlasma(PlasmaClient plasmaClient, byte[] objectId){
+        int timeoutMs = 0;
+        boolean isMetadata = false;
+
+        return plasmaClient.get(objectId, timeoutMs, isMetadata);
+    }
+
     public static void main(String[] args) throws IOException {
+        System.loadLibrary("plasma_java");
         String pathName = "src/resources/data/million.csv";
+
         Schema schema = generateSchemaFromCSV(pathName);
+        ByteArrayOutputStream out = writeStream(schema);
 
-//
-//        // pass scheme to writeStream() method
-//        ByteArrayOutputStream out = writeStream(schema);
-//
-//        // pass out into plasma; store it's object id
-//        // get it from plasma using object id
-//        // pass it to read stream
-//
-//        readStream(out.toByteArray());
-
-        //TestDataMillion.INSTANCE.getData().);
+        PlasmaClient plasmaClient = new PlasmaClient("/tmp/store", "", 0);
+        byte[] objectId = putValueInPlasma(plasmaClient, out.toByteArray());
+        readStream(getValueFromPlasma(plasmaClient, objectId));
     }
 }
