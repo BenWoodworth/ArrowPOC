@@ -31,7 +31,7 @@ version "1.0-SNAPSHOT"
 sourceCompatibility = version_java
 targetCompatibility = version_java
 
-mainClassName = "Main"
+mainClassName = "koresigma.arrowpoc.Main"
 
 repositories {
     mavenCentral()

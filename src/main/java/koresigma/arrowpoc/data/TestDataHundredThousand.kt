@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat
 object TestDataHundredThousand : TestDataCsv<TestDataHundredThousand.Entry>() {
 
     override val name = "hundred-thousand"
-    override val file = resource("data/hundred-thousand.csv")
+    override val file = resource("/data/hundred-thousand.csv")
     override val serializer = Entry.serializer().list
 
     private val dateFormat = SimpleDateFormat("d/m/yyyy")

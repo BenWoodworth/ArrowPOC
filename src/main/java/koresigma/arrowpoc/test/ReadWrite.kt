@@ -1,4 +1,4 @@
-package test
+package koresigma.arrowpoc.test
 
 interface ReadWrite {
 

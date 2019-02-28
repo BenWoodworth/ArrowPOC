@@ -1,4 +1,4 @@
-package koresigma.arrowpoc.data;
+package koresigma.arrowpoc;
 
 import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;

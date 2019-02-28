@@ -6,7 +6,7 @@ import kotlinx.serialization.list
 object TestDataMillion : TestDataCsv<TestDataMillion.Entry>() {
 
     override val name = "million"
-    override val file = resource("data/million.csv")
+    override val file = resource("/data/million.csv")
     override val serializer = Entry.serializer().list
 
     override fun parseEntry(row: List<String>): Entry {

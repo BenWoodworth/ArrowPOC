@@ -1,6 +1,6 @@
 package koresigma.arrowpoc.data
 
-import Main
+import koresigma.arrowpoc.Main
 import java.io.File
 
 abstract class TestDataCsv<TRow> : TestData<List<TRow>> {

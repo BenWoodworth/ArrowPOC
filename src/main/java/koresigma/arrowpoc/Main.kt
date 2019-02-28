@@ -1,9 +1,12 @@
-package koresigma.arrowpoc.data
+package koresigma.arrowpoc
 
 import PerformanceTester
 import PlasmaStore
 import TestResult
-import test.*
+import koresigma.arrowpoc.data.TestData
+import koresigma.arrowpoc.data.TestDataHundredThousand
+import koresigma.arrowpoc.data.TestDataMillion
+import koresigma.arrowpoc.test.*
 import java.io.File
 
 object Main {
