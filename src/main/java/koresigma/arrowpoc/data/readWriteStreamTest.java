@@ -11,18 +11,31 @@ import org.apache.arrow.vector.types.pojo.FieldType;
 import org.apache.arrow.vector.types.pojo.Schema;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import static java.util.Arrays.asList;
+import java.util.*;
 
 public class readWriteStreamTest {
     private static BufferAllocator allocator = new RootAllocator(Integer.MAX_VALUE);
 
-    private static Schema getTestSchema(){
-        String fieldName = "testField";
-        ArrowType.Int arrowType = new ArrowType.Int(8, true);
-        Field newField = new Field(fieldName, FieldType.nullable(arrowType), Collections.emptyList());
-        return new Schema(asList(newField));
+    private static Schema generateSchemaFromCSV(String pathname) throws IOException{
+        Scanner sc = new Scanner(new File(pathname));
+        String[] fieldNames = sc.nextLine().split(",");
+        HashMap<String, ArrowType.Decimal> schemeValues = new HashMap<>();
+
+        for (String fieldName: fieldNames){
+            schemeValues.put(fieldName, new ArrowType.Decimal(100,5));
+        }
+
+        List<Field> allFields = new ArrayList<>();
+        for (HashMap.Entry<String, ArrowType.Decimal> entry : schemeValues.entrySet()) {
+            String fieldName = entry.getKey();
+            FieldType fieldType = FieldType.nullable(entry.getValue());
+            Field newField = new Field(fieldName, fieldType, Collections.emptyList());
+            allFields.add(newField);
+        }
+
+        return new Schema(allFields);
     }
 
     private static ByteArrayOutputStream writeStream(Schema schema) throws IOException {
@@ -52,19 +65,18 @@ public class readWriteStreamTest {
     }
 
     public static void main(String[] args) throws IOException {
-        // get csv test data
-        // create schema for it
+        String pathName = "src/resources/data/million.csv";
+        Schema schema = generateSchemaFromCSV(pathName);
 
-        Schema schema = getTestSchema(); // comment this out once we figure out how to create schema for test data
-
-        // pass scheme to writeStream() method
-        ByteArrayOutputStream out = writeStream(schema);
-
-        // pass out into plasma; store it's object id
-        // get it from plasma using object id
-        // pass it to read stream
-
-        readStream(out.toByteArray());
+//
+//        // pass scheme to writeStream() method
+//        ByteArrayOutputStream out = writeStream(schema);
+//
+//        // pass out into plasma; store it's object id
+//        // get it from plasma using object id
+//        // pass it to read stream
+//
+//        readStream(out.toByteArray());
 
         //TestDataMillion.INSTANCE.getData().);
     }
