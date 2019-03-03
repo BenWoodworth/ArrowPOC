@@ -1,9 +1,14 @@
 package koresigma.arrowpoc;
 
+import com.google.gson.JsonObject;
 import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;
 import org.apache.arrow.plasma.PlasmaClient;
+import org.apache.arrow.vector.DecimalVector;
+import org.apache.arrow.vector.FieldVector;
 import org.apache.arrow.vector.VectorSchemaRoot;
+import org.apache.arrow.vector.dictionary.Dictionary;
+import org.apache.arrow.vector.dictionary.DictionaryProvider;
 import org.apache.arrow.vector.ipc.ArrowStreamReader;
 import org.apache.arrow.vector.ipc.ArrowStreamWriter;
 import org.apache.arrow.vector.types.pojo.ArrowType;
@@ -22,23 +27,16 @@ public class readWriteStreamTest {
     private static Schema generateSchemaFromCSV(String pathname) throws IOException{
         Scanner sc = new Scanner(new File(pathname));
         String[] fieldNames = sc.nextLine().split(",");
-        HashMap<String, ArrowType.Decimal> schemeValues = new HashMap<>();
+        List<Field> allFields = new ArrayList<>();
 
         for (String fieldName: fieldNames){
-            schemeValues.put(fieldName, new ArrowType.Decimal(100,5));
-        }
-
-        List<Field> allFields = new ArrayList<>();
-        for (HashMap.Entry<String, ArrowType.Decimal> entry : schemeValues.entrySet()) {
-            String fieldName = entry.getKey();
-            FieldType fieldType = FieldType.nullable(entry.getValue());
+            FieldType fieldType = FieldType.nullable(new ArrowType.Decimal(100,5));
             Field newField = new Field(fieldName, fieldType, Collections.emptyList());
             allFields.add(newField);
         }
 
         return new Schema(allFields);
     }
-
 
     private static ByteArrayOutputStream writeStream(Schema schema) throws IOException {
         int numBatches = 1;
@@ -61,7 +59,7 @@ public class readWriteStreamTest {
         try (ArrowStreamReader reader = new ArrowStreamReader(in, allocator)) {
             Schema readSchema = reader.getVectorSchemaRoot().getSchema();
             while (reader.loadNextBatch()){
-                System.out.println(reader.getVectorSchemaRoot().getRowCount());
+                System.out.println(reader.getVectorSchemaRoot().contentToTSVString());
                 reader.loadNextBatch();
             }
         }
@@ -87,13 +85,13 @@ public class readWriteStreamTest {
 
     public static void main(String[] args) throws IOException {
         System.loadLibrary("plasma_java");
-        String pathName = "src/resources/data/million.csv";
+        String pathName = "src/main/resources/data/million.csv";
 
         Schema schema = generateSchemaFromCSV(pathName);
         ByteArrayOutputStream out = writeStream(schema);
-
-        PlasmaClient plasmaClient = new PlasmaClient("/tmp/store", "", 0);
-        byte[] objectId = putValueInPlasma(plasmaClient, out.toByteArray());
-        readStream(getValueFromPlasma(plasmaClient, objectId));
+//
+//        PlasmaClient plasmaClient = new PlasmaClient("/tmp/store", "", 0);
+//        byte[] objectId = putValueInPlasma(plasmaClient, out.toByteArray());
+//        readStream(getValueFromPlasma(plasmaClient, objectId));
     }
 }
