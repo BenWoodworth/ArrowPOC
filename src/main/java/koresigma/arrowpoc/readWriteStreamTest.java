@@ -81,16 +81,6 @@ public class readWriteStreamTest {
         return os;
     }
 
-    // writeStream() helper function for better readability
-    private static VectorSchemaRoot getNewVectorSchemaRoot(Schema schema, IntVector vector){
-        return new VectorSchemaRoot(schema, Collections.singletonList(vector), vector.getValueCount());
-    }
-
-    // writeStream() helper function for better readability
-    private static ArrowStreamWriter getNewArrowStreamWriter(VectorSchemaRoot root, ByteArrayOutputStream os){
-        return new ArrowStreamWriter(root, null, Channels.newChannel(os));
-    }
-
     private static void writeBatchData(ArrowWriter writer, IntVector vector, VectorSchemaRoot root) throws IOException {
         writer.start();
 
