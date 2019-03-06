@@ -1,71 +1,22 @@
 package koresigma.arrowpoc;
 
-import com.google.gson.JsonObject;
 import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;
 import org.apache.arrow.plasma.PlasmaClient;
-import org.apache.arrow.vector.DecimalVector;
-import org.apache.arrow.vector.FieldVector;
+import org.apache.arrow.vector.IntVector;
 import org.apache.arrow.vector.VectorSchemaRoot;
-import org.apache.arrow.vector.dictionary.Dictionary;
-import org.apache.arrow.vector.dictionary.DictionaryProvider;
 import org.apache.arrow.vector.ipc.ArrowStreamReader;
 import org.apache.arrow.vector.ipc.ArrowStreamWriter;
-import org.apache.arrow.vector.types.pojo.ArrowType;
-import org.apache.arrow.vector.types.pojo.Field;
-import org.apache.arrow.vector.types.pojo.FieldType;
-import org.apache.arrow.vector.types.pojo.Schema;
+import org.apache.arrow.vector.ipc.ArrowWriter;
+import org.apache.arrow.vector.types.pojo.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
+import java.nio.channels.Channels;
 import java.util.*;
 
 public class readWriteStreamTest {
     private static BufferAllocator allocator = new RootAllocator(Integer.MAX_VALUE);
-
-    private static Schema generateSchemaFromCSV(String pathname) throws IOException{
-        Scanner sc = new Scanner(new File(pathname));
-        String[] fieldNames = sc.nextLine().split(",");
-        List<Field> allFields = new ArrayList<>();
-
-        for (String fieldName: fieldNames){
-            FieldType fieldType = FieldType.nullable(new ArrowType.Decimal(100,5));
-            Field newField = new Field(fieldName, fieldType, Collections.emptyList());
-            allFields.add(newField);
-        }
-
-        return new Schema(allFields);
-    }
-
-    private static ByteArrayOutputStream writeStream(Schema schema) throws IOException {
-        int numBatches = 1;
-
-        try (VectorSchemaRoot root = VectorSchemaRoot.create(schema, allocator)) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            try (ArrowStreamWriter writer = new ArrowStreamWriter(root, null, out)) {
-                writer.start();
-                for (int i = 0; i < numBatches; i++) {
-                    writer.writeBatch();
-                }
-                writer.end();
-            }
-            return out;
-        }
-    }
-
-    private static ByteArrayInputStream readStream(byte[] out) throws IOException {
-        ByteArrayInputStream in = new ByteArrayInputStream(out);
-        try (ArrowStreamReader reader = new ArrowStreamReader(in, allocator)) {
-            Schema readSchema = reader.getVectorSchemaRoot().getSchema();
-            while (reader.loadNextBatch()){
-                System.out.println(reader.getVectorSchemaRoot().contentToTSVString());
-                reader.loadNextBatch();
-            }
-        }
-
-        return in;
-    }
 
     private static byte[] putValueInPlasma(PlasmaClient plasmaClient, byte[] value){
         byte[] objectId = new byte[20];
@@ -83,15 +34,78 @@ public class readWriteStreamTest {
         return plasmaClient.get(objectId, timeoutMs, isMetadata);
     }
 
-    public static void main(String[] args) throws IOException {
-        System.loadLibrary("plasma_java");
-        String pathName = "src/main/resources/data/million.csv";
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // in writeStream() we need to create a vector for each header in the csv
+    // for each header we need to write all the data in it's column in writeBatch()
+    ////////////////////////////////////////////////////
 
-        Schema schema = generateSchemaFromCSV(pathName);
-        ByteArrayOutputStream out = writeStream(schema);
-//
+    private static void readStream(byte[] out) throws IOException{
+        ByteArrayInputStream in = new ByteArrayInputStream(out);
+        ArrowStreamReader reader = new ArrowStreamReader(in, allocator);
+        IntVector vector = (IntVector) reader.getVectorSchemaRoot().getFieldVectors().get(0);
+
+        while(reader.loadNextBatch()){
+            for(int i = 0; i < vector.getValueCount(); i++){
+                String output = "Index " + i + " is ";
+                output += vector.isNull(i) ? "null." : vector.get(i);
+                System.out.println(output);
+            }
+        }
+    }
+
+    private static ByteArrayOutputStream writeStream() throws IOException{
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+        IntVector vector = new IntVector("header1", allocator);
+        Schema schema = new Schema(Collections.singletonList(vector.getField()), null);
+        VectorSchemaRoot root = getNewVectorSchemaRoot(schema, vector);
+        ArrowStreamWriter writer = getNewArrowStreamWriter(root, os);
+        writeBatchData(writer, vector, root);
+
+        return os;
+    }
+
+    // writeStream() helper function for better readability
+    private static VectorSchemaRoot getNewVectorSchemaRoot(Schema schema, IntVector vector){
+        return new VectorSchemaRoot(schema, Collections.singletonList(vector), vector.getValueCount());
+    }
+
+    // writeStream() helper function for better readability
+    private static ArrowStreamWriter getNewArrowStreamWriter(VectorSchemaRoot root, ByteArrayOutputStream os){
+        return new ArrowStreamWriter(root, null, Channels.newChannel(os));
+    }
+
+    private static void writeBatchData(ArrowWriter writer, IntVector vector, VectorSchemaRoot root) throws IOException {
+        writer.start();
+
+        vector.setNull(0);
+        vector.setSafe(1, 1);
+        vector.setSafe(2, 2);
+        vector.setNull(3);
+        vector.setSafe(4, 1);
+        vector.setValueCount(5);
+        root.setRowCount(5);
+        writer.writeBatch();
+
+        vector.setNull(0);
+        vector.setSafe(1, 1);
+        vector.setSafe(2, 2);
+        vector.setValueCount(3);
+        root.setRowCount(3);
+        writer.writeBatch();
+
+        writer.end();
+    }
+
+    public static void main(String[] args) throws IOException {
+//        System.loadLibrary("plasma_java");
 //        PlasmaClient plasmaClient = new PlasmaClient("/tmp/store", "", 0);
+//        String pathName = "src/main/resources/data/million.csv";
+//        ByteArrayOutputStream out = writeStream();
+//        readStream(out.toByteArray());
 //        byte[] objectId = putValueInPlasma(plasmaClient, out.toByteArray());
 //        readStream(getValueFromPlasma(plasmaClient, objectId));
+
+        readStream(writeStream().toByteArray());
     }
 }
