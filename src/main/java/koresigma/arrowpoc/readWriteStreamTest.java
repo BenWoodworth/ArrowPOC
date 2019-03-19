@@ -110,7 +110,7 @@ public class readWriteStreamTest {
     public static void main(String[] args) throws IOException {
 //        System.loadLibrary("plasma_java");
 //        PlasmaClient plasmaClient = new PlasmaClient("/tmp/store", "", 0);
-        String pathName = "src/main/resources/data/million.csv";
+        String pathName = "src/main/resources/data/five.csv";
         readStream(writeStreamFromCsv(pathName).toByteArray());
 //        ByteArrayOutputStream out = writeStream();
 //        readStream(out.toByteArray());
