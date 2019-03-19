@@ -10,13 +10,9 @@ import org.apache.arrow.vector.ipc.ArrowStreamReader;
 import org.apache.arrow.vector.ipc.ArrowStreamWriter;
 import org.apache.arrow.vector.ipc.ArrowWriter;
 import org.apache.arrow.vector.types.pojo.*;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigInteger;
+
+import java.io.*;
 import java.nio.channels.Channels;
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class readWriteStreamTest {
@@ -39,61 +35,76 @@ public class readWriteStreamTest {
     private static void readStream(byte[] out) throws IOException{
         ByteArrayInputStream in = new ByteArrayInputStream(out);
         ArrowStreamReader reader = new ArrowStreamReader(in, allocator);
+        IntVector vector = (IntVector) reader.getVectorSchemaRoot().getFieldVectors().get(0);
 
-        for(int i = 0; i < reader.getVectorSchemaRoot().getFieldVectors().size(); i++){
-            IntVector vector = (IntVector) reader.getVectorSchemaRoot().getFieldVectors().get(i);
-            String fieldName = vector.getField().getName();
-            reader.loadNextBatch();
-            System.out.println(fieldName);
-            String output = "\t\tIndex 0: ";
-            output += vector.isNull(0) ? "null." : vector.get(0);
-            System.out.println(output);
+        while(reader.loadNextBatch()) {
+            for (int i = 0; i < vector.getValueCount(); i++) {
+                if (vector.isNull(i)){
+                    System.out.print("null ");
+                }else{
+                    System.out.print(vector.get(i) + " ");
+                }
+            }
+            System.out.println();
         }
     }
 
     private static ByteArrayOutputStream writeStreamFromCsv(String pathToFile) throws IOException{
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         Scanner scanner = new Scanner(new File(pathToFile));
-        String[] fieldNames = scanner.nextLine().split(",");
-        String[] values = scanner.nextLine().replace("$", "").split(",");
+        scanner.nextLine();
 
         List<FieldVector> vectors = new ArrayList<>();
         List<Field> fields = new ArrayList<>();
-        populateFieldsVectors(fieldNames, vectors, fields);
+        IntVector vector = new IntVector("csvtest", allocator);
+        vectors.add(vector);
+        fields.add(vector.getField());
 
         Schema schema = new Schema(fields, null);
         VectorSchemaRoot root = new VectorSchemaRoot(schema, vectors, 0);
         ArrowStreamWriter writer = new ArrowStreamWriter(root, null, Channels.newChannel(os));
+
         writer.start();
-        for(int i = 0; i < values.length; i++){
-            String value = values[i];
-            if(value.contains(".")){
-                value = value.substring(0, value.indexOf("."));
+        HashMap<Integer, List<String>> rows = new HashMap<>();
+        while(scanner.hasNextLine()){
+            String[] values = scanner.nextLine().replace("$", "").split(",");
+            for(int i = 0; i < values.length; i++){
+                if(rows.containsKey(i)){
+                    rows.get(i).add(values[i]);
+                }else{
+                    ArrayList<String> newList = new ArrayList<>();
+                    newList.add(values[i]);
+                    rows.put(i, newList);
+                }
             }
-            writeVal(writer, (IntVector) vectors.get(i), root, value);
         }
+
+        for(List<String> values: rows.values()){
+            writeBatch(writer, vector, values, root);
+        }
+
         writer.end();
         return os;
     }
 
-    private static void writeVal(ArrowWriter writer, IntVector vector, VectorSchemaRoot root, String value) throws IOException{
-        try{
-            vector.setSafe(0, Integer.parseInt(value));
-        }catch (NumberFormatException nfe){
-            vector.setNull(0);
-        }
-        vector.setValueCount(1);
-        root.setRowCount(1);
-        writer.writeBatch();
-    }
+    private static void writeBatch(ArrowWriter writer, IntVector vector, List<String> values, VectorSchemaRoot root) throws IOException{
+        for(int i = 0; i < values.size(); i++){
+            String value = values.get(i);
 
-    // writeStream helper method for better readability
-    private static void populateFieldsVectors(String[] fieldNames, List<FieldVector> vectors, List<Field> fields){
-        for (String fieldName: fieldNames) {
-            IntVector vector = new IntVector(fieldName, allocator);
-            vectors.add(vector);
-            fields.add(vector.getField());
+            if(value.contains(".")){
+                value = value.substring(0, value.indexOf("."));
+            }
+
+            try{
+                vector.setSafe(i, Integer.parseInt(value));
+            }catch (NumberFormatException nfe){
+                vector.setNull(i);
+            }
         }
+
+        vector.setValueCount(values.size());
+        root.setRowCount(values.size());
+        writer.writeBatch();
     }
 
     public static void main(String[] args) throws IOException {
