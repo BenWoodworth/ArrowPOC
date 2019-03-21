@@ -65,31 +65,18 @@ public class readWriteStreamTest {
         ArrowStreamWriter writer = new ArrowStreamWriter(root, null, Channels.newChannel(os));
 
         writer.start();
-        HashMap<Integer, List<String>> rows = new HashMap<>();
         while(scanner.hasNextLine()){
             String[] values = scanner.nextLine().replace("$", "").split(",");
-            for(int i = 0; i < values.length; i++){
-                if(rows.containsKey(i)){
-                    rows.get(i).add(values[i]);
-                }else{
-                    ArrayList<String> newList = new ArrayList<>();
-                    newList.add(values[i]);
-                    rows.put(i, newList);
-                }
-            }
-        }
-
-        for(List<String> values: rows.values()){
             writeBatch(writer, vector, values, root);
         }
-
         writer.end();
+
         return os;
     }
 
-    private static void writeBatch(ArrowWriter writer, IntVector vector, List<String> values, VectorSchemaRoot root) throws IOException{
-        for(int i = 0; i < values.size(); i++){
-            String value = values.get(i);
+    private static void writeBatch(ArrowWriter writer, IntVector vector, String[] values, VectorSchemaRoot root) throws IOException{
+        for(int i = 0; i < values.length; i++){
+            String value = values[i];
 
             if(value.contains(".")){
                 value = value.substring(0, value.indexOf("."));
@@ -102,20 +89,22 @@ public class readWriteStreamTest {
             }
         }
 
-        vector.setValueCount(values.size());
-        root.setRowCount(values.size());
+        vector.setValueCount(values.length);
+        root.setRowCount(values.length);
         writer.writeBatch();
     }
 
     public static void main(String[] args) throws IOException {
-//        System.loadLibrary("plasma_java");
-//        PlasmaClient plasmaClient = new PlasmaClient("/tmp/store", "", 0);
+        long start = System.nanoTime();
+        System.loadLibrary("plasma_java");
+        PlasmaClient plasmaClient = new PlasmaClient("/tmp/store", "", 0);
         String pathName = "src/main/resources/data/million.csv";
-        readStream(writeStreamFromCsv(pathName).toByteArray());
-//        ByteArrayOutputStream out = writeStream();
-//        readStream(out.toByteArray());
-//        byte[] objectId = putValueInPlasma(plasmaClient, out.toByteArray());
-//        readStream(getValueFromPlasma(plasmaClient, objectId));
+        //readStream(writeStreamFromCsv(pathName).toByteArray());
+        ByteArrayOutputStream out = writeStreamFromCsv(pathName);
+        readStream(out.toByteArray());
+        byte[] objectId = putValueInPlasma(plasmaClient, out.toByteArray());
+        readStream(getValueFromPlasma(plasmaClient, objectId));
+        System.out.println(System.nanoTime() - start);
 
     }
 }
