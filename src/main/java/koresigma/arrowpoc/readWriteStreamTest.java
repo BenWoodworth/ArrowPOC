@@ -105,6 +105,5 @@ public class readWriteStreamTest {
         byte[] objectId = putValueInPlasma(plasmaClient, out.toByteArray());
         readStream(getValueFromPlasma(plasmaClient, objectId));
         System.out.println(System.nanoTime() - start);
-
     }
 }
