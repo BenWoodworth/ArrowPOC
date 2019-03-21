@@ -2,18 +2,17 @@ package koresigma.arrowpoc
 
 import org.apache.arrow.memory.RootAllocator
 import org.apache.arrow.plasma.PlasmaClient
-import org.apache.arrow.vector.FieldVector
-import org.apache.arrow.vector.IntVector
-import org.apache.arrow.vector.VectorSchemaRoot
+import org.apache.arrow.vector.*
 import org.apache.arrow.vector.ipc.ArrowStreamReader
 import org.apache.arrow.vector.ipc.ArrowStreamWriter
-import org.apache.arrow.vector.ipc.ArrowWriter
-import org.apache.arrow.vector.types.pojo.Field
 import org.apache.arrow.vector.types.pojo.Schema
+import org.apache.arrow.vector.util.Text
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.InputStream
 import java.nio.channels.Channels
+import java.text.SimpleDateFormat
 import java.util.*
 
 object ReadWriteStreamTest_Ben {
@@ -33,9 +32,8 @@ object ReadWriteStreamTest_Ben {
         return plasmaClient.get(objectId, timeoutMs, isMetadata)
     }
 
-    private fun readStream(out: ByteArray) {
-        val `in` = ByteArrayInputStream(out)
-        val reader = ArrowStreamReader(`in`, allocator)
+    private fun readStream(stream: InputStream) {
+        val reader = ArrowStreamReader(stream, allocator)
         val vector = reader.vectorSchemaRoot.fieldVectors[0] as IntVector
 
         while (reader.loadNextBatch()) {
@@ -50,79 +48,55 @@ object ReadWriteStreamTest_Ben {
         }
     }
 
-    private fun writeStreamFromCsv(pathToFile: String): ByteArrayOutputStream {
-        val os = ByteArrayOutputStream()
-        val scanner = Scanner(File(pathToFile))
-        scanner.nextLine()
+    private fun writeStreamFromCsv(csvFile: File): ByteArrayOutputStream {
+        val output = ByteArrayOutputStream()
 
-        val vectors = ArrayList<FieldVector>()
-        val fields = ArrayList<Field>()
-        val vector = IntVector("csvtest", allocator)
-        vectors.add(vector)
-        fields.add(vector.field)
+        val vectors = object : Iterable<FieldVector> {
+            val first = VarCharVector("first", allocator)
+            val last = VarCharVector("last", allocator)
+            val email = VarCharVector("email", allocator)
+            val age = IntVector("age", allocator)
+            val birthday = DateMilliVector("birthday", allocator)
+            val ccnumber = BigIntVector("ccnumber", allocator)
 
-        val schema = Schema(fields, null)
-        val root = VectorSchemaRoot(schema, vectors, 0)
-        val writer = ArrowStreamWriter(root, null, Channels.newChannel(os))
+            override fun iterator(): Iterator<FieldVector> {
+                return listOf<FieldVector>(first, last, email, age, birthday, ccnumber).iterator()
+            }
+        }
+
+        val schema = Schema(vectors.toList().map { it.field })
+
+        val root = VectorSchemaRoot(schema, vectors.toList(), 0)
+        val writer = ArrowStreamWriter(root, null, Channels.newChannel(output))
 
         writer.start()
-        val rows = HashMap<Int, MutableList<String>>()
-        while (scanner.hasNextLine()) {
-            val values = scanner.nextLine()
-                .replace("$", "")
-                .split(",".toRegex())
-                .dropLastWhile { it.isEmpty() }
+        csvFile.useLines { csvLines ->
+            val birthdayFormat = SimpleDateFormat("MM/DD/YYYY")
 
-            for (i in values.indices) {
-                if (rows.containsKey(i)) {
-                    rows[i]!!.add(values[i])
-                } else {
-                    val newList = ArrayList<String>()
-                    newList.add(values[i])
-                    rows[i] = newList
+            csvLines
+                .drop(1) // Skip header
+                .filter { !it.isBlank() }
+                .map { it.split(",") }
+                .forEachIndexed { i, entry ->
+                    //TODO Is setSafe() slow?
+                    vectors.first.setSafe(i, Text(entry[0]))
+                    vectors.last.setSafe(i, Text(entry[1]))
+                    vectors.email.setSafe(i, Text(entry[2]))
+                    vectors.age.setSafe(i, entry[3].toInt())
+                    vectors.birthday.setSafe(i, birthdayFormat.parse(entry[4]).time)
+                    vectors.ccnumber.setSafe(i, entry[5].toLong())
                 }
-            }
         }
 
-        for (values in rows.values) {
-            writeBatch(writer, vector, values, root)
-        }
-
-        writer.end()
-        return os
-    }
-
-    private fun writeBatch(writer: ArrowWriter, vector: IntVector, values: List<String>, root: VectorSchemaRoot) {
-        for (i in values.indices) {
-            var value = values[i]
-
-            if (value.contains(".")) {
-                value = value.substring(0, value.indexOf("."))
-            }
-
-            try {
-                vector.setSafe(i, Integer.parseInt(value))
-            } catch (nfe: NumberFormatException) {
-                vector.setNull(i)
-            }
-
-        }
-
-        vector.valueCount = values.size
-        root.rowCount = values.size
-        writer.writeBatch()
+        return output
     }
 
     @JvmStatic
     fun main(args: Array<String>) {
-        //        System.loadLibrary("plasma_java");
-        //        PlasmaClient plasmaClient = new PlasmaClient("/tmp/store", "", 0);
-        val pathName = "src/main/resources/data/five.csv"
-        readStream(writeStreamFromCsv(pathName).toByteArray())
-        //        ByteArrayOutputStream out = writeStream();
-        //        readStream(out.toByteArray());
-        //        byte[] objectId = putValueInPlasma(plasmaClient, out.toByteArray());
-        //        readStream(getValueFromPlasma(plasmaClient, objectId));
+        val fiveCsv = ReadWriteStreamTest_Ben::class.java.getResource("/data/five.csv")
 
+        val writeStream = writeStreamFromCsv(File(fiveCsv.file))
+        val byteArrayStream = ByteArrayInputStream(writeStream.toByteArray())
+        readStream(byteArrayStream)
     }
 }
