@@ -18,59 +18,49 @@ import java.util.*
 object ReadWriteStreamTest_Ben {
     private val allocator = RootAllocator(Integer.MAX_VALUE.toLong())
 
-    private fun putValueInPlasma(plasmaClient: PlasmaClient, value: ByteArray): ByteArray {
-        val objectId = ByteArray(20)
-        Random().nextBytes(objectId)
-        val metaData: ByteArray? = null
-        plasmaClient.put(objectId, value, metaData)
-        return objectId
-    }
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val fiveCsv = ReadWriteStreamTest_Ben::class.java.getResource("/data/five.csv")
 
-    private fun getValueFromPlasma(plasmaClient: PlasmaClient, objectId: ByteArray): ByteArray {
-        val timeoutMs = 0
-        val isMetadata = false
-        return plasmaClient.get(objectId, timeoutMs, isMetadata)
+        val writeStream = File(fiveCsv.file)
+            .loadVectors()
+            .toArrowStream()
+
+        val byteArrayStream = ByteArrayInputStream(writeStream.toByteArray())
+        readStream(byteArrayStream)
     }
 
     private fun readStream(stream: InputStream) {
         val reader = ArrowStreamReader(stream, allocator)
-        val vector = reader.vectorSchemaRoot.fieldVectors[0] as IntVector
+        val root = reader.vectorSchemaRoot
+        val vectors = root.fieldVectors
 
         while (reader.loadNextBatch()) {
-            for (i in 0 until vector.valueCount) {
-                if (vector.isNull(i)) {
-                    print("null ")
-                } else {
-                    print(vector.get(i).toString() + " ")
+            val rows = reader.vectorSchemaRoot.rowCount
+
+            for (vector in vectors) {
+                print("${vector.field.name} (${vector.field.type}):")
+
+                for (i in 0 until rows) {
+                    print("\t${vector.getObject(i)}")
                 }
+
+                println()
             }
-            println()
         }
     }
 
-    private fun writeStreamFromCsv(csvFile: File): ByteArrayOutputStream {
-        val output = ByteArrayOutputStream()
+    private fun File.loadVectors(): List<FieldVector> {
+        val first = VarCharVector("first", allocator)
+        val last = VarCharVector("last", allocator)
+        val email = VarCharVector("email", allocator)
+        val age = IntVector("age", allocator)
+        val birthday = DateMilliVector("birthday", allocator)
+        val ccnumber = BigIntVector("ccnumber", allocator)
 
-        val vectors = object : Iterable<FieldVector> {
-            val first = VarCharVector("first", allocator)
-            val last = VarCharVector("last", allocator)
-            val email = VarCharVector("email", allocator)
-            val age = IntVector("age", allocator)
-            val birthday = DateMilliVector("birthday", allocator)
-            val ccnumber = BigIntVector("ccnumber", allocator)
+        val vectors = listOf<FieldVector> (first, last, email, age, birthday, ccnumber)
 
-            override fun iterator(): Iterator<FieldVector> {
-                return listOf<FieldVector>(first, last, email, age, birthday, ccnumber).iterator()
-            }
-        }
-
-        val schema = Schema(vectors.toList().map { it.field })
-
-        val root = VectorSchemaRoot(schema, vectors.toList(), 0)
-        val writer = ArrowStreamWriter(root, null, Channels.newChannel(output))
-
-        writer.start()
-        csvFile.useLines { csvLines ->
+        useLines { csvLines ->
             val birthdayFormat = SimpleDateFormat("MM/DD/YYYY")
 
             csvLines
@@ -79,24 +69,29 @@ object ReadWriteStreamTest_Ben {
                 .map { it.split(",") }
                 .forEachIndexed { i, entry ->
                     //TODO Is setSafe() slow?
-                    vectors.first.setSafe(i, Text(entry[0]))
-                    vectors.last.setSafe(i, Text(entry[1]))
-                    vectors.email.setSafe(i, Text(entry[2]))
-                    vectors.age.setSafe(i, entry[3].toInt())
-                    vectors.birthday.setSafe(i, birthdayFormat.parse(entry[4]).time)
-                    vectors.ccnumber.setSafe(i, entry[5].toLong())
+                    first.setSafe(i, Text(entry[0]))
+                    last.setSafe(i, Text(entry[1]))
+                    email.setSafe(i, Text(entry[2]))
+                    age.setSafe(i, entry[3].toInt())
+                    birthday.setSafe(i, birthdayFormat.parse(entry[4]).time)
+                    ccnumber.setSafe(i, entry[5].toLong())
+
+                    vectors.forEach { it.valueCount = i + 1 }
                 }
         }
 
-        return output
+        return vectors
     }
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        val fiveCsv = ReadWriteStreamTest_Ben::class.java.getResource("/data/five.csv")
+    private fun List<FieldVector>.toArrowStream(): ByteArrayOutputStream {
+        val output = ByteArrayOutputStream()
 
-        val writeStream = writeStreamFromCsv(File(fiveCsv.file))
-        val byteArrayStream = ByteArrayInputStream(writeStream.toByteArray())
-        readStream(byteArrayStream)
+        val schema = Schema(this.map { it.field })
+        val root = VectorSchemaRoot(schema, this, this[0].valueCount)
+
+        val writer = ArrowStreamWriter(root, null, Channels.newChannel(output))
+        writer.writeBatch()
+
+        return output
     }
 }
