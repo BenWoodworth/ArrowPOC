@@ -98,8 +98,8 @@ object ReadWriteStreamTest_Ben {
             val birthdayFormat = SimpleDateFormat("MM/DD/YYYY")
 
             fun String.dollarToInt() = 0 +
-                    substring(1 until length - 3).toInt() * 10 +
-                    substring(length - 2 until length).toInt() * 10
+                    substring(1 until length - 3).toInt() * 100 +
+                    substring(length - 2 until length).toInt()
 
             csvLines
                 .drop(1) // Skip header
