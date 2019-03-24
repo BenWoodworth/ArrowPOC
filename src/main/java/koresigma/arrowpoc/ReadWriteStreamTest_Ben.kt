@@ -20,10 +20,10 @@ object ReadWriteStreamTest_Ben {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val fiveCsv = ReadWriteStreamTest_Ben::class.java.getResource("/data/five.csv")
+        val fiveCsv = ReadWriteStreamTest_Ben::class.java.getResource("/data/million.csv")
 
         val writeStream = File(fiveCsv.file)
-            .loadVectors()
+            .load1mVectors()
             .toArrowStream()
 
         val byteArrayStream = ByteArrayInputStream(writeStream.toByteArray())
@@ -50,7 +50,7 @@ object ReadWriteStreamTest_Ben {
         }
     }
 
-    private fun File.loadVectors(): List<FieldVector> {
+    private fun File.load100kVectors(): List<FieldVector> {
         val first = VarCharVector("first", allocator)
         val last = VarCharVector("last", allocator)
         val email = VarCharVector("email", allocator)
@@ -58,7 +58,7 @@ object ReadWriteStreamTest_Ben {
         val birthday = DateMilliVector("birthday", allocator)
         val ccnumber = BigIntVector("ccnumber", allocator)
 
-        val vectors = listOf<FieldVector> (first, last, email, age, birthday, ccnumber)
+        val vectors = listOf<FieldVector>(first, last, email, age, birthday, ccnumber)
 
         useLines { csvLines ->
             val birthdayFormat = SimpleDateFormat("MM/DD/YYYY")
@@ -75,6 +75,45 @@ object ReadWriteStreamTest_Ben {
                     age.setSafe(i, entry[3].toInt())
                     birthday.setSafe(i, birthdayFormat.parse(entry[4]).time)
                     ccnumber.setSafe(i, entry[5].toLong())
+
+                    vectors.forEach { it.valueCount = i + 1 }
+                }
+        }
+
+        return vectors
+    }
+
+    private fun File.load1mVectors(): List<FieldVector> {
+        val age = SmallIntVector("age", allocator)
+        val dollar = IntVector("dollar", allocator)
+        val longitude = Float4Vector("longitude", allocator)
+        val latitude = Float4Vector("latitude", allocator)
+        val zip = IntVector("zip", allocator)
+        val integer = IntVector("integer", allocator)
+        val ccnumber = BigIntVector("ccnumber", allocator)
+
+        val vectors = listOf<FieldVector>(age, dollar, longitude, latitude, zip, integer, ccnumber)
+
+        useLines { csvLines ->
+            val birthdayFormat = SimpleDateFormat("MM/DD/YYYY")
+
+            fun String.dollarToInt() = 0 +
+                    substring(1 until length - 3).toInt() * 10 +
+                    substring(length - 2 until length).toInt() * 10
+
+            csvLines
+                .drop(1) // Skip header
+                .filter { !it.isBlank() }
+                .map { it.split(",") }
+                .forEachIndexed { i, entry ->
+                    //TODO Is setSafe() slow?
+                    age.setSafe(i, entry[0].toInt())
+                    dollar.setSafe(i, entry[1].dollarToInt())
+                    longitude.setSafe(i, entry[2].toFloat())
+                    latitude.setSafe(i, entry[3].toFloat())
+                    zip.setSafe(i, entry[4].toInt())
+                    integer.setSafe(i, entry[5].toInt())
+                    ccnumber.setSafe(i, entry[6].toLong())
 
                     vectors.forEach { it.valueCount = i + 1 }
                 }
