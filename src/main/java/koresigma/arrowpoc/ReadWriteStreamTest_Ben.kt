@@ -95,8 +95,7 @@ object ReadWriteStreamTest_Ben {
         val vectors = listOf<FieldVector>(age, dollar, longitude, latitude, zip, integer, ccnumber)
 
         useLines { csvLines ->
-            val birthdayFormat = SimpleDateFormat("MM/DD/YYYY")
-
+            // "$abcd.ef" -> abcdef
             fun String.dollarToInt() = 0 +
                     substring(1 until length - 3).toInt() * 100 +
                     substring(length - 2 until length).toInt()
